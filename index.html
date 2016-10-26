@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Halloween 2016</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			*{
+				box-sizing: border-box;
+				font-family: 'Roboto Slab', sans-serif;
+				font-size: 13px;
+				font-weight: 100;
+				margin :0;
+				padding: 0;
+			}
+			html {
+				height: 100%;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				background-color: #000000;
+				color: #ffffff;
+				line-height: 20px;
+				height: 100%;
+				overflow: hidden;
+				font-family: 'Roboto Slab', sans-serif;
+				font-size: 13px;
+				font-weight: 100;
+			}
+			#container {
+				position: absolute;
+				left: 0;
+				top: 0;
+				right: 0;
+				bottom: 0;
+			}
+			#info{
+				position: absolute;
+				left: 10px; top: 10px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"></div>
+		<div id="info" ></div>
+
+		<script src="js/three.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script src="js/OBJLoader.js"></script>
+		<script src="js/Maf.js"></script>
+		<script src="js/EquirectangularToCubemap.js"></script>
+		<script src="js/THREE.FBOHelper.js"></script>
+
+		<script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+
+<script id="ortho-vs" type="x-shader/x-vertex" >
+precision highp float;
+
+attribute vec3 position;
+attribute vec2 uv;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+
+varying vec2 vUv;
+
+void main() {
+
+	vUv = uv;
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
+
+}
+</script>
+
+<script type="x-shader/x-vertex" id="position-vs" >
+
+attribute vec2 position;
+attribute vec2 uv;
+
+varying vec2 vUv;
+//varying vec3 vOffset;
+//uniform vec3 offset;
+//uniform mat4 inverseModelViewMatrix;
+void main() {
+	//vOffset = ( inverseModelViewMatrix * vec4( offset, 1. ) ).xyz;
+	vUv = vec2(uv.x, 1.0 - uv.y);
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+
+</script>
+
+<script type="x-shader/x-fragment" id="position-fs" >
+precision highp float;
+
+vec3 mod289(vec3 x) {
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+vec4 mod289(vec4 x) {
+	return x - floor(x * (1.0 / 289.0)) * 289.0;
+}
+vec4 permute(vec4 x) {
+	return mod289(((x*34.0)+1.0)*x);
+}
+vec4 taylorInvSqrt(vec4 r){
+	return 1.79284291400159 - 0.85373472095314 * r;
+}
+float snoise(vec3 v) {
+	const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+	const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+	// First corner
+	vec3 i  = floor(v + dot(v, C.yyy) );
+	vec3 x0 =   v - i + dot(i, C.xxx) ;
+	// Other corners
+	vec3 g = step(x0.yzx, x0.xyz);
+	vec3 l = 1.0 - g;
+	vec3 i1 = min( g.xyz, l.zxy );
+	vec3 i2 = max( g.xyz, l.zxy );
+	//   x0 = x0 - 0.0 + 0.0 * C.xxx;
+	//   x1 = x0 - i1  + 1.0 * C.xxx;
+	//   x2 = x0 - i2  + 2.0 * C.xxx;
+	//   x3 = x0 - 1.0 + 3.0 * C.xxx;
+	vec3 x1 = x0 - i1 + C.xxx;
+	vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+	vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
+	// Permutations
+	i = mod289(i);
+	vec4 p = permute( permute( permute(
+		  i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+		+ i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+		+ i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+	// Gradients: 7x7 points over a square, mapped onto an octahedron.
+	// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+	float n_ = 0.142857142857; // 1.0/7.0
+	vec3  ns = n_ * D.wyz - D.xzx;
+	vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+	vec4 x_ = floor(j * ns.z);
+	vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+	vec4 x = x_ *ns.x + ns.yyyy;
+	vec4 y = y_ *ns.x + ns.yyyy;
+	vec4 h = 1.0 - abs(x) - abs(y);
+	vec4 b0 = vec4( x.xy, y.xy );
+	vec4 b1 = vec4( x.zw, y.zw );
+	//vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
+	//vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
+	vec4 s0 = floor(b0)*2.0 + 1.0;
+	vec4 s1 = floor(b1)*2.0 + 1.0;
+	vec4 sh = -step(h, vec4(0.0));
+	vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+	vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+	vec3 p0 = vec3(a0.xy,h.x);
+	vec3 p1 = vec3(a0.zw,h.y);
+	vec3 p2 = vec3(a1.xy,h.z);
+	vec3 p3 = vec3(a1.zw,h.w);
+	//Normalise gradients
+	vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+	p0 *= norm.x;
+	p1 *= norm.y;
+	p2 *= norm.z;
+	p3 *= norm.w;
+	// Mix final noise value
+	vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+	m = m * m;
+	return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+}
+
+vec4 snoiseD(vec3 v) { //returns vec4(value, dx, dy, dz)
+  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+  vec3 i  = floor(v + dot(v, C.yyy) );
+  vec3 x0 =   v - i + dot(i, C.xxx) ;
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min( g.xyz, l.zxy );
+  vec3 i2 = max( g.xyz, l.zxy );
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy;
+  vec3 x3 = x0 - D.yyy;
+  i = mod289(i);
+  vec4 p = permute( permute( permute(
+             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+  float n_ = 0.142857142857; // 1.0/7.0
+  vec3  ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_ );
+  vec4 x = x_ *ns.x + ns.yyyy;
+  vec4 y = y_ *ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4( x.xy, y.xy );
+  vec4 b1 = vec4( x.zw, y.zw );
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+  vec3 p0 = vec3(a0.xy,h.x);
+  vec3 p1 = vec3(a0.zw,h.y);
+  vec3 p2 = vec3(a1.xy,h.z);
+  vec3 p3 = vec3(a1.zw,h.w);
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+  vec4 values = vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ); //value of contributions from each corner (extrapolate the gradient)
+  vec4 m = max(0.5 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0); //kernel function from each corner
+  vec4 m2 = m * m;
+  vec4 m3 = m * m * m;
+  vec4 temp = -6.0 * m2 * values;
+  float dx = temp[0] * x0.x + temp[1] * x1.x + temp[2] * x2.x + temp[3] * x3.x + m3[0] * p0.x + m3[1] * p1.x + m3[2] * p2.x + m3[3] * p3.x;
+  float dy = temp[0] * x0.y + temp[1] * x1.y + temp[2] * x2.y + temp[3] * x3.y + m3[0] * p0.y + m3[1] * p1.y + m3[2] * p2.y + m3[3] * p3.y;
+  float dz = temp[0] * x0.z + temp[1] * x1.z + temp[2] * x2.z + temp[3] * x3.z + m3[0] * p0.z + m3[1] * p1.z + m3[2] * p2.z + m3[3] * p3.z;
+  return vec4(dot(m3, values), dx, dy, dz) * 42.0;
+}
+
+vec3 curlNoise (vec3 p) {
+    vec3 xNoisePotentialDerivatives = snoiseD( p ).yzw; //yzw are the xyz derivatives
+    vec3 yNoisePotentialDerivatives = snoiseD(vec3( p.y - 19.1 , p.z + 33.4 , p.x + 47.2 )).zwy;
+    vec3 zNoisePotentialDerivatives = snoiseD(vec3( p.z + 74.2 , p.x - 124.5 , p.y + 99.4 )).wyz;
+    vec3 noiseVelocity = vec3(
+        zNoisePotentialDerivatives.y - yNoisePotentialDerivatives.z,
+        xNoisePotentialDerivatives.z - zNoisePotentialDerivatives.x,
+        yNoisePotentialDerivatives.x - xNoisePotentialDerivatives.y
+    );
+    const float e = .1;
+	const float divisor = 1.0 / ( 2.0 * e );
+	return normalize( noiseVelocity * divisor );
+
+}
+
+mat4 rotationMatrix(vec3 axis, float angle) {
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
+uniform float time;
+uniform sampler2D origin;
+uniform sampler2D inputTexture;
+varying vec2 vUv;
+
+void main() {
+
+	vec4 c = texture2D( inputTexture, vUv );
+	vec4 or = texture2D( origin, vUv );
+	vec3 pos = c.xyz;
+	float life = c.a;
+
+	if( life == 0. ) {
+		pos = ( rotationMatrix( vec3( 0., 1., 0. ), time ) * vec4( or.rgb, 1. ) ).xyz;
+	}
+
+	pos += 2. * curlNoise( .002 * pos + 1. * time );
+	life += .1 * or.a;
+	if( life > 50. ) life = 0.;
+
+	gl_FragColor = vec4( pos, life );
+
+}
+
+</script>
+
+<script type="x-shader/x-vertex" id="pumpkin-vs" >
+
+attribute vec3 position;
+
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+
+uniform sampler2D positions;
+uniform sampler2D prevPositions;
+uniform sampler2D geometry;
+uniform vec2 posDimensions;
+uniform sampler2D origin;
+
+varying vec2 vUv;
+varying vec3 vNormal;
+
+mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
+	vec3 rr = vec3(sin(roll), cos(roll), 0.0);
+	vec3 ww = normalize(target - origin);
+	vec3 uu = normalize(cross(ww, rr));
+	vec3 vv = normalize(cross(uu, ww));
+	return mat3(uu, vv, ww);
+}
+
+float rand(vec2 co){
+	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+float parabola( float x, float k ) {
+	return pow( 4. * x * ( 1. - x ), k );
+}
+
+void main() {
+
+	vec2 uv;
+
+	vec2 pUv = vec2( mod( position.z, posDimensions.x ) / posDimensions.x, ( position.z / posDimensions.x ) / posDimensions.y );
+	vec4 pumpkinPos = texture2D( positions, pUv );
+	vec4 prevPmpkinPos = texture2D( prevPositions, pUv );
+	mat4 localRotation = mat4( calcLookAtMatrix( prevPmpkinPos.xyz, pumpkinPos.xyz, 0. * pumpkinPos.a ) );
+	vec4 or = texture2D( origin, pUv );
+
+	float w = 1024.;
+	float model = position.y;
+	if( position.x < 426. ) uv = vec2( position.x / w, ( model * 3. ) / 128. );
+	else uv = vec2( ( position.x - 426. ) / w, ( ( 12. + model ) * 3. ) / 128. );
+
+	float scale = or.a * clamp( parabola( pumpkinPos.a / 50., 1. ), 0., .2 );
+	vec4 p = pumpkinPos + scale * localRotation * vec4( texture2D( geometry, uv ).rgb, 1. );
+	vNormal = texture2D( geometry, uv + vec2( 0., 1. / 128. ) ).rgb;
+	vUv = texture2D( geometry, uv + vec2( 0., 2. / 128. ) ).rg;
+
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( p.xyz, 1. );
+
+}
+
+</script>
+
+<script type="x-shader/x-fragment" id="pumpkin-fs" >
+precision highp float;
+
+uniform sampler2D map;
+
+varying vec2 vUv;
+varying vec3 vNormal;
+
+void main(){
+
+	vec3 c = texture2D( map, vUv ).rgb;
+
+	gl_FragColor = vec4( c, 1. );
+
+}
+
+</script>
+
+<script>
+
+'use strict';
+
+var PUMPKINS = 10000;
+var helper;
+
+var container, renderer, camera, controls, scene,
+	mesh, geometry, material;
+
+var container = document.getElementById( 'container' );
+
+var id = 'b1275b704badf79d972d51aa4b92ea15';
+
+SC.initialize({
+	client_id: id
+});
+
+var audio = document.createElement( 'audio' );
+var context = new AudioContext();
+var analyser = context.createAnalyser();
+analyser.fftSize = Math.max( 32, Maf.nextPowerOfTwo( PUMPKINS ) * 2 );
+var dataArray = new Uint8Array( analyser.frequencyBinCount );
+
+SC.resolve( 'https://soundcloud.com/djtruestory/electro-swing' ).then( function(song){
+	audio.crossOrigin = '';
+	audio.src = song.stream_url + "?client_id=" + id;
+	var source = context.createMediaElementSource( audio );
+	source.connect( analyser );
+	source.connect( context.destination );
+	audio.play();
+});
+
+/*navigator.getUserMedia({ audio: true }, function(stream) {
+
+	analyser = context.createAnalyser();
+	analyser.fftSize = 	Maf.nextPowerOfTwo( SPHERES ) * 2;
+	dataArray = new Uint8Array( analyser.frequencyBinCount );
+	microphone = context.createMediaStreamSource(stream);
+	microphone.connect( analyser );
+},
+function(err) {
+} );*/
+
+function createFBO( width, height ) {
+
+	var fbo = new THREE.WebGLRenderTarget( width, height, {
+		wrapS: THREE.ClampToEdgeWrapping,
+		wrapT: THREE.ClampToEdgeWrapping,
+		minFilter: THREE.NearestFilter,
+		magFilter: THREE.NearestFilter,
+		format: THREE.RGBAFormat,
+		type: THREE.FloatType,
+		stencilBuffer: false,
+		depthBuffer: false
+	});
+
+	fbo.texture.generateMipmaps = false;
+
+	return fbo;
+
+}
+
+function GPUSim( renderer, width, height, shader ) {
+
+	this.renderer = renderer;
+	this.shader = shader;
+	this.orthoScene = new THREE.Scene();
+	var fbo = createFBO( width, height );
+	this.fbos = [ fbo, fbo.clone() ];
+	this.current = 0;
+	this.output = this.fbos[ 0 ];
+	this.orthoCamera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, .00001, 1000 );
+	this.orthoQuad = new THREE.Mesh( new THREE.PlaneBufferGeometry( width, height ), this.shader );
+	this.orthoScene.add( this.orthoQuad );
+
+}
+
+GPUSim.prototype.render = function() {
+
+	this.shader.uniforms.inputTexture.value = this.fbos[ this.current ];
+	this.input = this.fbos[ this.current ];
+	this.current = 1 - this.current;
+	this.output = this.fbos[ this.current ];
+	this.renderer.render( this.orthoScene, this.orthoCamera, this.output );
+
+}
+
+function process(){
+
+	analyser.getByteFrequencyData( dataArray );
+
+}
+
+var envMap;
+var cubeCamera = new THREE.CubeCamera( .1, 1000, 512 );
+cubeCamera.position.y = 2;
+
+function initScene() {
+
+}
+
+window.addEventListener( 'load', init );
+
+var geometryTexture, pumpkinPositionsTexture;
+var positionSim;
+var pumpkinsMaterial;
+
+function memcpy (src, srcOffset, dst, dstOffset, length) {
+	var i
+
+	src = src.subarray || src.slice ? src : src.buffer
+	dst = dst.subarray || dst.slice ? dst : dst.buffer
+
+	src = srcOffset ? src.subarray ?
+		src.subarray(srcOffset, length && srcOffset + length) :
+		src.slice(srcOffset, length && srcOffset + length) : src
+
+	if (dst.set) {
+		dst.set(src, dstOffset)
+	} else {
+		for (i=0; i<src.length; i++) {
+			dst[i + dstOffset] = src[i]
+		}
+	}
+
+	return dst
+}
+
+function init() {
+
+	container = document.getElementById( 'container' );
+
+	scene = new THREE.Scene();
+
+	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 10000 );
+	camera.target = new THREE.Vector3( 0, 0, 0 );
+	camera.position.z = 400;
+	camera.position.y = 400;
+	scene.add( camera );
+
+	renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setClearColor( 0x202020 );
+	container.appendChild( renderer.domElement );
+
+	helper = new THREE.FBOHelper( renderer );
+
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+	var texLoader = new THREE.TextureLoader();
+	var texture = texLoader.load( 'assets/pumpkins.jpg', function( res ) {
+
+		var material = new THREE.MeshBasicMaterial( {
+		} );
+
+		var loader = new THREE.OBJLoader();
+		loader.load( 'assets/all.obj', function( res ) {
+
+			// 0 - 11, tops
+			// 12 - 23 bodies
+			var max = 0;
+
+			res.children.forEach( function( m ) {
+				max = Math.max( max, m.geometry.attributes.position.count );
+				max = Math.max( max, m.geometry.attributes.normal.count );
+				max = Math.max( max, m.geometry.attributes.uv.count );
+			});
+
+			var width = Maf.nextPowerOfTwo( max );
+			var height = Maf.nextPowerOfTwo( res.children.length * 3 );
+			console.log( width, height );
+
+			var data = new Float32Array( width * 4 * height );
+			var ptr = 0;
+			var topOffsets = [
+				new THREE.Vector3( 4, 48, 2 ),
+				new THREE.Vector3( -4, 38, -2 ),
+				new THREE.Vector3( 5, 37, -3 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 ),
+				new THREE.Vector3( 0, 20, 0 )
+			];
+			res.children.forEach( function( m, i ) {
+
+				var geo = m.geometry;
+				geo.center();
+				if( i < 12 ) {
+					var translateMatrix = new THREE.Matrix4();
+					translateMatrix.makeTranslation( topOffsets[ i ].x, topOffsets[ i ].y, topOffsets[ i ].z );
+					geo.applyMatrix( translateMatrix );
+				}
+
+				for( var j = 0, j1 = 0; j < geo.attributes.position.count * 4; j += 3, j1 += 4 ){
+					data[ ptr + j1 ] = geo.attributes.position.array[ j ];
+					data[ ptr + j1 + 1 ] = geo.attributes.position.array[ j + 1 ];
+					data[ ptr + j1 + 2 ] = geo.attributes.position.array[ j + 2 ];
+				}
+				ptr += width * 4;
+
+				for( var j = 0, j1 = 0; j < geo.attributes.normal.count * 4; j += 3, j1 += 4 ){
+					data[ ptr + j1 ] = geo.attributes.normal.array[ j ];
+					data[ ptr + j1 + 1 ] = geo.attributes.normal.array[ j + 1 ];
+					data[ ptr + j1 + 2 ] = geo.attributes.normal.array[ j + 2 ];
+				}
+				ptr += width * 4;
+
+				for( var j = 0, j1 = 0; j < geo.attributes.uv.count * 4; j += 2, j1 += 4 ){
+					data[ ptr + j1 ] = geo.attributes.uv.array[ j ];
+					data[ ptr + j1 + 1 ] = geo.attributes.uv.array[ j + 1 ];
+				}
+				ptr += width * 4;
+
+			});
+
+			geometryTexture = new THREE.DataTexture(
+				data,
+				width,
+				height,
+				THREE.RGBAFormat,
+				THREE.FloatType,
+				null,
+				THREE.ClampToEdgeWrapping,
+				THREE.ClampToEdgeWrapping,
+				THREE.NearestFilter,
+				THREE.NearestFilter
+			);
+			geometryTexture.needsUpdate = true;
+
+			helper.attach( geometryTexture, 'Geometry' );
+
+			var pw = Maf.nextPowerOfTwo( Math.sqrt( PUMPKINS ) );
+			var ph = pw;
+			console.log( pw, ph );
+			var positionData = new Float32Array( pw * 4 * ph );
+			for( var j = 0; j < positionData.length; j += 4 ) {
+				positionData[ j ] = Maf.randomInRange( -100, 100 );
+				positionData[ j + 1 ] = Maf.randomInRange( -100, 100 );
+				positionData[ j + 2 ] = Maf.randomInRange( -100, 100 );
+				positionData[ j + 3 ] = Maf.randomInRange( 1, 2 );
+			}
+
+			pumpkinPositionsTexture = new THREE.DataTexture(
+				positionData,
+				pw,
+				ph,
+				THREE.RGBAFormat,
+				THREE.FloatType,
+				null,
+				THREE.ClampToEdgeWrapping,
+				THREE.ClampToEdgeWrapping,
+				THREE.NearestFilter,
+				THREE.NearestFilter
+			);
+			pumpkinPositionsTexture.needsUpdate = true;
+
+			var positionShader = new THREE.RawShaderMaterial( {
+				uniforms:{
+					time: { type: 'f', value: 0 },
+					inputTexture: { type: 't', value: null },
+					origin: { type: 't', value: pumpkinPositionsTexture }
+				},
+				vertexShader: document.getElementById( 'ortho-vs' ).textContent,
+				fragmentShader: document.getElementById( 'position-fs' ).textContent,
+				depthTest: false,
+				depthWrite: false
+			} );
+
+			positionSim = new GPUSim( renderer, pw, ph, positionShader );
+
+			helper.attach( positionSim.fbos[ 0 ], 'Position FBO#0' );
+			helper.attach( positionSim.fbos[ 1 ], 'Position FBO#1' );
+
+			helper.attach( pumpkinPositionsTexture, 'Positions' );
+
+			var p = 1;
+			var l = ( 426 + 768 ) * 3;
+			var positions = new Float32Array( pw * ph * l );
+			var model = ~~(Math.random()*12);
+			var id = 0;
+			for( var j = 0, j2 = 0; j < positions.length; j += 3, j2++ ) {
+				if( j % l === 0 ) {
+					model = ~~(Math.random()*12);
+					id++;
+				}
+				positions[ j ] = j2 % l;
+				positions[ j + 1 ] = model;
+				positions[ j + 2 ] = id;
+			}
+
+			var geometry = new THREE.BufferGeometry();
+			geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+
+			pumpkinsMaterial = new THREE.RawShaderMaterial({
+				uniforms: {
+					positions: { type: 't', value: pumpkinPositionsTexture },
+					prevPositions: { type: 't', value: pumpkinPositionsTexture },
+					geometry: { type: 't', value: geometryTexture },
+					posDimensions: { type: 'v2', value: new THREE.Vector2( pw, ph ) },
+					origin: { type: 't', value: pumpkinPositionsTexture },
+					map: { type: 't', value: texture }
+				},
+				vertexShader: document.getElementById('pumpkin-vs').textContent,
+				fragmentShader: document.getElementById('pumpkin-fs').textContent,
+				side: THREE.DoubleSide,
+				wireframe: !true
+			});
+			var mesh = new THREE.Mesh( geometry, pumpkinsMaterial );
+			scene.add( mesh );
+
+			initScene();
+			animate();
+
+		});
+
+	} )
+
+	window.addEventListener( 'resize', onWindowResized );
+	onWindowResized();
+
+}
+
+function onWindowResized( event ) {
+
+	renderer.setSize( container.clientWidth, container.clientHeight );
+	camera.aspect = container.clientWidth / container.clientHeight;
+	camera.updateProjectionMatrix();
+	helper.setSize( container.clientWidth, container.clientHeight );
+}
+
+var lastTime = 0;
+
+var run = true;
+
+function animate() {
+
+	process();
+	controls.update();
+
+	var t = performance.now();
+	var dt = ( t - lastTime ) / 1000;
+	lastTime = t;
+
+	if( run ) {
+
+		positionSim.shader.uniforms.time.value = .00001 * performance.now();
+		positionSim.render();
+		pumpkinsMaterial.uniforms.positions.value = positionSim.output;
+		pumpkinsMaterial.uniforms.prevPositions.value = positionSim.input;
+
+	}
+
+	requestAnimationFrame( animate );
+
+	render();
+	helper.update();
+
+}
+
+function render() {
+
+	renderer.render( scene, camera );
+
+}
+
+</script>
+
+	</body>
+</html>
