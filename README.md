@@ -7,7 +7,8 @@ Pumpkin-based music visualisation using WebGL and Web Audio
 3D models and textures by BitGem <a href="https://shop.bitgem3d.com/products/halloween-pumpkins" >Halloween Pumpkins</a>
 
 > The repo is missing the assets from BitGem. I wasn't sure about the license, so I haven't uploaded them
-> I know it sucks, since the project won't work without them
+
+> I know, it sucks! The project won't work without them! But the code is there, and you can buy the assets
 
 Made with <a href="https://threejs.org/" >three.js</a>, <a href="https://github.com/spite/THREE.FBOHelper" >THREE.FBOHelper</a>, <a href="https://github.com/kaimallea/isMobile" >isMobile</a>
 
