@@ -606,7 +606,7 @@
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
-			
+
 			return this;
 
 		},
@@ -1374,7 +1374,7 @@
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
-			
+
 			return this;
 
 		},
@@ -2683,7 +2683,7 @@
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
-			
+
 			return this;
 
 		},
@@ -19491,7 +19491,7 @@
 			}
 
 			scope.numPlanes = nPlanes;
-			
+
 			return dstArray;
 
 		}
@@ -20292,8 +20292,8 @@
 
 			}
 
-			var rangeStart = ( object.drawRange.start || geometry.drawRange.start ) * rangeFactor;
-			var rangeCount = ( object.drawRange.count || geometry.drawRange.count ) * rangeFactor;
+			var rangeStart = ( /*object.drawRange.start ||*/ geometry.drawRange.start ) * rangeFactor;
+			var rangeCount = ( /*object.drawRange.count ||*/ geometry.drawRange.count ) * rangeFactor;
 
 			var groupStart = group !== null ? group.start * rangeFactor : 0;
 			var groupCount = group !== null ? group.count * rangeFactor : Infinity;

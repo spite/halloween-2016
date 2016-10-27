@@ -1,9 +1,16 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Halloween 2016</title>
+		<title>Pumpkin Jam - Halloween 2016</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<meta property="og:url" content="https://www.clicktorelease.com/code/pumpkin-jam" />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="This is my pumpkin jam!" />
+		<meta property="og:description" content="A silly Halloween-themed stravaganza" />
+		<meta property="og:image" content="https://www.clicktorelease.com/code/pumpkin-jam/image.jpg" />
+
 		<style>
 			*{
 				box-sizing: border-box;
@@ -16,10 +23,18 @@
 			html {
 				height: 100%;
 			}
+			#unsupported-warning{
+				display: none;
+				position: absolute;
+				left: 0; top: 50%;
+				margin-top: -1em;
+				right: 0; text-align: center;
+				padding: 0 40px;
+			}
 			body {
 				margin: 0;
 				padding: 0;
-				background-color: #000000;
+				background-color: #202020;
 				color: #ffffff;
 				line-height: 20px;
 				height: 100%;
@@ -27,6 +42,10 @@
 				font-family: 'Roboto Slab', sans-serif;
 				font-size: 13px;
 				font-weight: 100;
+				text-shadow: 0 1px 0 rgba(0,0,0,.6);
+			}
+			strong{
+				font-weight: bold;
 			}
 			#container {
 				position: absolute;
@@ -34,17 +53,176 @@
 				top: 0;
 				right: 0;
 				bottom: 0;
+				display: none;
+			}
+			#songPanel{
+				position: absolute;
+				left: 70px;
+				top: 10px;
+				right: 0;
+				opacity: 1;
+				pointer-events: auto;
+				transition: opacity 250ms ease-out;
+			}
+			#songPanel.hidden{
+				opacity: 0;
+				pointer-events: none;
+			}
+			#button{
+				position: absolute;
+				left: 15px;
+				top: 10px;
+				border: 2px solid white;
+				border-radius: 100%;
+				padding: 20px;
+				line-height: 0;
+				opacity: .5;
+				pointer-events: auto;
+				transition: transform 400ms ease-out, opacity 200ms ease-out, background-color 100ms ease-out;
+				cursor: pointer;
+			}
+			#button:hover{
+				opacity: 1;
+				background-color: rgba(255,255,255,.5);
+			}
+			#button.hidden{
+				opacity: .15;
+				pointer-events: none;
+			}
+			#button::after{
+				content: "i";
+				position: absolute;
+				left: 50%;
+				transform: translate3d( -50%, -50%, 0 );
+			}
+			#content{
+				position: absolute; left: 0; top: 0;
+				display:flex;justify-content:center;align-items:center;width:100%;height:100%;
+				opacity: 1;
+				pointer-events: auto;
+				transition: transform 400ms ease-out, opacity 200ms ease-out;
+			}
+			#loader{
+				position: absolute;
+				left: 0;
+				right: 0;
+				text-align: center;
+			}
+			#info.hidden{
+				opacity: 0;
+				pointer-events: none
 			}
 			#info{
-				position: absolute;
-				right: 10px; top: 10px;
+				transition: opacity 300ms ease-out;
+				text-align: center;
+				height: 400px;
 			}
+			#info a, #songInfo a{
+				color: inherit;
+				text-decoration: none;
+				opacity: .5;
+				border-bottom: 1px solid rgba( 255,255,255,1);
+			}
+			#info a:hover{
+				opacity: 1;
+			}
+			#info input[type=text]{
+				outline: none;
+				background-color: transparent;
+				border: 1px solid #ddd;
+				color: inherit;
+				padding: 4px;
+				width: 200px;
+				transition: width 200ms ease-out ;
+			}
+			#info input[type=text]:focus{
+				width: 400px;
+			}
+			#info .title{
+				margin-bottom: 2em;
+			}
+			#content.hidden{
+				opacity: 0;
+				pointer-events: none;
+				transform: translate3d( -50%, -50%, 0 ) scale3d(.5,.5,.5);
+			}
+			#tabs a.active{
+				border: none;
+				opacity: 1;
+				font-weight: bold;
+			}
+			#songIfno{
+				position: absolute; left: 0;
+				top: 0;
+			}
+			#sharePanel{
+				position: absolute; left: 0;
+				top: 50px;
+			}
+			.button{ color: white; font-weight: 300; font-size: 10px; line-height: 20px; width: 70px; display: inline-block; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 3px; height: 20px; pointer-events: auto; padding: 0;}
+			#shareFacebookBtn{ background-color: #1072d5;}
+			#shareTwitterBtn{ background-color: #20c2ea }
+			#shareFacebookBtn:hover{ background-color: #157de4; }
+			#shareTwitterBtn:hover{ background-color: #10cbfa; }
+			#fboh-fbos-list{ display: none !important;}
 		</style>
 	</head>
 	<body>
 
 		<div id="container"></div>
-		<div id="info" ><a id="startButton" href="#" >Start</a></div>
+		<div id="content" >
+			<div id="loader" >Loading...</div>
+			<div id="info" class="hidden" >
+				<img class="title" src="assets/title.png" width="200px" height="100px" />
+				<p id="tabs"><a data-tab="about" class="active" href="#">Welcome!</a> · <a data-tab="settings" href="#">Controls</a> · <a data-tab="credits" href="#">Credits</a></p><br/>
+				<div class="panel" id="credits" style="display:none">
+					<p><strong>A silly Halloween-themed stravaganza</strong></p>
+					<p>Pumpkin-based music visualisation</p>
+					<p>Using WebGL and Web Audio</p><br/>
+					<p>Jaume Sanchez <a href="https://twitter.com/thespite" >@thespite</a></p>
+					<p><a href="https://www.clicktorelease.com">www.clicktorelease.com</a></p><br/>
+					<p>3D models and textures by BitGem <a href="https://shop.bitgem3d.com/products/halloween-pumpkins" >Halloween Pumpkins</a></p><br/>
+					<p><a href="https://threejs.org/" >three.js</a>, <a href="https://github.com/spite/THREE.FBOHelper" >THREE.FBOHelper</a>, <a href="https://github.com/kaimallea/isMobile" >isMobile</a></p><br/>
+					<p>Curl noise from <a href="https://github.com/cabbibo/glsl-curl-noise" >glsl-curl-noise</a> by <a href="https://twitter.com/cabbibo" >@cabbibo</a></p>
+					<p>Fog equation adapted from <a href="https://www.npmjs.com/package/glsl-fog">glsl-fog</a> by <a href="https://twitter.com/hughskennedy" >@hughskennedy</a></p>
+					<p>Kick detection adapted from <a href="http://jsantell.github.io/dancer.js/" >dancer.js</a> by <a href="https://twitter.com/jsantell" >@jsantell</a></p>
+					<p>GLSL Perlin noise from <a href="https://github.com/ashima/webgl-noise/" >webgl-noise</a></p>
+					<br/>
+				</div>
+				<div class="panel" id="about" >
+					<p><strong>Select a song</strong></p>
+					<p><a id="startMusic1" href="#" >DJ True Story - Electro Swing Mix</a></p>
+					<p><a id="startMusic2" href="#" >MegaDrive - I Am The Program</a></p>
+					<br/>
+					<p>or enter your own<br/><input type="text" id="songURL" placeholder="SoundCloud URL"><br/><a id="playMusic" href="#" >Play</a></p>
+					<br/>
+					<p><a id="startMic" href="#" >or use your microphone</a><br/>(Asks for permission)</p><br/>
+					<p>You can share the URL with the selected song with your friends!</p>
+					<br/>
+				</div>
+				<div class="panel" id="settings" style="display:none">
+					<p>You can pause and resume the song<br/>with the control right next to the title</p><br/>
+					<p>Press space to pause movement</p><br/>
+					<p>Demo mode locks the camera</p>
+					<p><input type="checkbox" id="demoMode" checked > <label for="demoMode" >Demo mode</label></p><br/>
+					<p>Demo mode disabled allows you to:</p>
+					<p>Click and drag to rotate camera</p>
+					<p>Zoom in and out with scroll</p>
+					<br/>
+				</div>
+				<p><a href="#" id="closeInfo">Close</a></p>
+			</div>
+		</div>
+		<div id="button" class="hidden"></div>
+		<div id="songPanel" class="hidden" >
+			<div id="songInfo" ></div>
+			<div id="sharePanel">
+				<a href="#" id="shareTwitterBtn" class="button" >Twitter</a>
+				<a href="#" id="shareFacebookBtn" class="button" >Facebook</a>
+			</div>
+		</div>
+		<div id="unsupported-warning" >Mobile and tablet are unsupported at the moment<br/>Sorry, I coded this in two nights, I'd need more time to get mobile ready!</div>
+		<div id="fb-root"></div>
 
 		<script src="js/three.js"></script>
 		<script src="js/OrbitControls.js"></script>
@@ -52,6 +230,8 @@
 		<script src="js/Maf.js"></script>
 		<script src="js/EquirectangularToCubemap.js"></script>
 		<script src="js/THREE.FBOHelper.js"></script>
+		<script src="js/Kick.js"></script>
+		<script src="js/isMobile.min.js"></script>
 
 		<script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
 
@@ -322,6 +502,7 @@ varying vec2 vUv;
 varying vec3 vNormal;
 varying float vRim;
 varying float vTexture;
+varying float vBass;
 
 mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
 	vec3 rr = vec3(sin(roll), cos(roll), 0.0);
@@ -353,6 +534,7 @@ void main() {
 	vec4 pumpkinInfo = texture2D( infoMap, pUv );
 	vTexture = pumpkinInfo.z;
 	float freq = texture2D( FFTMap, vec2( pumpkinInfo.y, 0. ) ).r;
+	vBass = .5 + .5 * smoothstep( .6, .8, freq );
 	vec4 pumpkinPos = texture2D( positions, pUv );
 	vec4 prevPmpkinPos = texture2D( prevPositions, pUv );
 	mat4 localRotation = mat4( calcLookAtMatrix( prevPmpkinPos.xyz, pumpkinPos.xyz, .25 * freq * sin( freq * time ) ) );
@@ -394,11 +576,13 @@ precision highp float;
 
 uniform sampler2D map;
 uniform sampler2D glowMap;
+uniform float lighting;
 
 varying vec2 vUv;
 varying vec3 vNormal;
 varying float vRim;
 varying float vTexture;
+varying float vBass;
 
 // fogexp from
 // https://www.npmjs.com/package/glsl-fog
@@ -423,7 +607,7 @@ void main(){
 
 	vec3 fogColor = vec3( 32. ) / 255.;
 
-	gl_FragColor = vec4( mix( fogColor, c.rgb, fogAmount ) + a.rgb * fogAmount2, 1. );
+	gl_FragColor = vec4( ( 1. - lighting ) * mix( fogColor, c.rgb, fogAmount ) + ( vBass + lighting ) * a.rgb * fogAmount2, 1. );
 
 }
 
@@ -461,7 +645,7 @@ void main(){
 	vec4 c = texture2D( inputTexture, vUv );
 	vec4 g = texture2D( glowTexture, vUv );
 
-	gl_FragColor = vec4( .75 * c.rgb + g.rgb, 1. );
+	gl_FragColor = vec4( 1. * c.rgb + .5 * g.rgb, 1. );
 
 }
 </script>
@@ -629,10 +813,76 @@ void main() {
 
 'use strict';
 
-var PUMPKINS = window.location.hash.substr( 1 ) || 1000;
+var tabMenu = document.getElementById( 'tabs' );
+var tabs = {};
+for( var j = 0; j < tabMenu.children.length; j++ ) {
+	var link = tabMenu.children[ j ];
+	var tabId = link.getAttribute( 'data-tab' );
+	tabs[ tabId ] = document.getElementById( tabId );
+	link.addEventListener( 'click', function( e ) {
+		var c = 0;
+		for( var j in tabs ) {
+			tabs[ j ].style.display = 'none';
+			tabMenu.children[ c ].classList.remove( 'active' );
+			c++;
+		}
+		tabs[ this.getAttribute( 'data-tab' ) ].style.display = 'block';
+		this.classList.add( 'active' );
+		e.preventDefault();
+	}.bind( link ) );
+}
+
+var PUMPKINS;
+var userSong;
+// hash: { p: num, u: url }
+function parseHash() {
+
+	var hash = window.location.hash.substr( 1 );
+
+	const regex = /(\S)=([^&]*)/g;
+	const str = hash;
+	let m;
+
+	var reload = false;
+
+	while ((m = regex.exec(str)) !== null) {
+		if (m.index === regex.lastIndex) {
+			regex.lastIndex++;
+		}
+
+		var varName = m[ 1 ];
+		var varValue = m[ 2 ];
+
+		if( varName === 'p' ) {
+			varValue = parseInt( varValue, 10 );
+			if( PUMPKINS !== undefined && varValue !== PUMPKINS ) {
+				reload = true;
+			}
+			PUMPKINS = varValue;
+		}
+		if( varName === 'u' ) userSong = decodeURIComponent( varValue );
+
+	}
+
+	if( reload ) {
+		window.location.reload();
+	}
+
+}
+
+parseHash();
+
+PUMPKINS = PUMPKINS || 1000;
+
+window.addEventListener( 'hashchange', function( e ) {
+	userSong = null;
+	parseHash();
+	if( userSong ) getSong( userSong );
+} );
+
 var helper;
 
-var demo = !true;
+var demo = true;
 
 var container, renderer, camera, controls, scene,
 	mesh, geometry, material;
@@ -645,61 +895,184 @@ SC.initialize({
 	client_id: id
 });
 
-//var AudioContext = webkitAudioContext || AudioContext;
+if( 'webkitAudioContext' in window ) {
+	var AudioContext = webkitAudioContext;
+}
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
 
 var audio = document.createElement( 'audio' );
+audio.loop = true;
+audio.autoplay = true;
+audio.crossOrigin = '';
 var context = new AudioContext();
 var analyser = context.createAnalyser();
 analyser.fftSize = 256;
 var frequencyData = new Uint8Array( analyser.frequencyBinCount );
+
+var songSource = context.createMediaElementSource( audio );
+songSource.connect( analyser );
+songSource.connect( context.destination );
+
+var kick = new Kick({
+	frequency: [ 5, 20 ],
+	decay: 0.04,
+	onKick: function() {
+		lighting = 1;
+	},
+	offKick: function() {
+		lighting *= .95;
+	}
+});
+kick.on();
 
 var spectrumTexture = new THREE.DataTexture( frequencyData, .5 * frequencyData.length, 1, THREE.LuminanceFormat );
 spectrumTexture.minFilter = THREE.NearestFilter;
 spectrumTexture.magFilter = THREE.NearestFilter;
 spectrumTexture.needsUpdate = true;
 
-var songName = 'https://soundcloud.com/megadrivemusic/i-am-the-program';
-//var songName = 'https://soundcloud.com/djtruestory/electro-swing';
-
-function getSong() {
-	SC.resolve( songName ).then( function(song){
-		audio.crossOrigin = '';
-		audio.src = song.stream_url + "?client_id=" + id;
-		var source = context.createMediaElementSource( audio );
-		source.connect( analyser );
-		source.connect( context.destination );
-		audio.play();
-	});
-}
-//getMicrophone();
-getSong();
-
-document.getElementById( 'startButton' ).addEventListener( 'click', function( e ) {
-	audio.play();
-})
-
-function process(){
-
-	analyser.getByteFrequencyData( frequencyData );
-	spectrumTexture.needsUpdate = true;
-
-}
-
 var microphone;
 
+function resetSound() {
+	if( microphone ) {
+		microphone.disconnect();
+	}
+	if( songSource ) {
+		songSource.disconnect();
+	}
+}
+
+var songPanel = document.getElementById( 'songPanel' );
+var songInfo = document.getElementById( 'songInfo' );
+var sharePanel = document.getElementById( 'sharePanel' );
+
+function getSong( songURL ) {
+	SC.resolve( songURL ).then( function(song){
+		songInfo.innerHTML = '<p><b><a href="' + song.permalink_url + '" >' + song.title + '</a> <a href="#" id="pauseBtn" >PAUSE</a></b><br/><a href="' + song.user.permalink_url + '">' + song.user.username + '</a></p>'
+		audio.src = song.stream_url + "?client_id=" + id;
+		songSource.connect( analyser );
+		songSource.connect( context.destination );
+		songPanel.classList.remove( 'hidden' );
+
+		document.getElementById( 'pauseBtn' ).addEventListener( 'click', function( e ) {
+			if( audio.paused ) {
+				this.textContent = 'PAUSE';
+				audio.play();
+			} else {
+				this.textContent = 'PLAY';
+				audio.pause();
+			}
+			e.preventDefault();
+		});
+
+		var baseUrl = 'https://www.clicktorelease.com/code/pumpkin-jam'
+		var url = baseUrl + '#p=' + PUMPKINS + '&u=' + encodeURIComponent( songURL );
+		shareFacebookBtn.onclick = function( e ) {
+
+			window.open( 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent( url ), 'facebook-share-dialog', 'width=626,height=436');
+			return false;
+		}
+
+		shareTwitterBtn.onclick = function( e ) {
+
+			var msg = 'This is my pumpkin jam! ' + url;
+			window.open( 'https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent( url ) + '&text=' + encodeURIComponent( msg ), 'twitter-share-dialog', 'width=626,height=436');
+			return false;
+		}
+
+		requestAnimationFrame( start );
+	});
+}
+
 function getMicrophone() {
+
+	if( microphone ) {
+		microphone.connect( analyser );
+		return;
+	}
 
 	navigator.getUserMedia( { audio: true }, function(stream) {
 
 		microphone = context.createMediaStreamSource(stream);
 		microphone.connect( analyser );
+		start();
 
 	},
 	function(err) {
 	} );
+
+}
+
+var content = document.getElementById( 'content' );
+var infoPanel = document.getElementById( 'info' );
+var loaderPanel = document.getElementById( 'loader' );
+var infoButton = document.getElementById( 'button' );
+document.getElementById( 'button' ).addEventListener( 'click', function( e ) {
+	content.classList.remove( 'hidden' );
+	infoButton.classList.add( 'hidden' );
+	infoPanel.classList.remove( 'hidden' );
+});
+function closeInfo() {
+	content.classList.add( 'hidden' );
+	infoButton.classList.remove( 'hidden' );
+}
+document.getElementById( 'closeInfo' ).addEventListener( 'click', function( e ) {
+	closeInfo();
+});
+
+var playing = false;
+
+function start() {
+
+	if( playing ) return;
+	playing = true;
+
+}
+
+function setSong( url ) {
+	closeInfo();
+	resetSound();
+	var hash = '#p=' + PUMPKINS + '&u=' + encodeURIComponent( url );
+	window.location.hash = hash;
+}
+
+document.getElementById( 'startMusic1' ).addEventListener( 'click', function( e ) {
+	setSong( 'https://soundcloud.com/djtruestory/electro-swing' );
+	e.preventDefault();
+})
+
+document.getElementById( 'startMusic2' ).addEventListener( 'click', function( e ) {
+	setSong( 'https://soundcloud.com/megadrivemusic/i-am-the-program' );
+	e.preventDefault();
+})
+
+document.getElementById( 'startMic' ).addEventListener( 'click', function( e ) {
+	getMicrophone();
+	e.preventDefault();
+})
+
+document.getElementById( 'playMusic' ).addEventListener( 'click', function( e ) {
+	var url = document.getElementById( 'songURL' ).value;
+	setSong( url );
+	e.preventDefault();
+})
+
+document.getElementById( 'demoMode' ).addEventListener( 'click', function( e ) {
+	demo = this.checked;
+})
+
+/*document.getElementById( 'startButton' ).addEventListener( 'click', function( e ) {
+	audio.play();
+})*/
+
+var lighting = 0;
+
+function process(){
+
+	analyser.getByteFrequencyData( frequencyData );
+	spectrumTexture.needsUpdate = true;
+	kick.onUpdate();
 
 }
 
@@ -756,11 +1129,12 @@ cubeCamera.position.y = 2;
 var compositeFBO, glowFBO, blurredGlowFBO, fullBlurredGlowFBO, assembledFBO, tiltShiftFBO;
 var infoData, infoTexture;
 
-function initScene() {
-
+if( isMobile.any ) {
+	loaderPanel.style.display = 'none';
+	document.getElementById( 'unsupported-warning' ).style.display = 'block';
+} else {
+	window.addEventListener( 'load', init );
 }
-
-window.addEventListener( 'load', init );
 
 var geometryTexture, pumpkinPositionsTexture;
 var positionSim;
@@ -803,6 +1177,209 @@ function createRenderTarget() {
 }
 
 var compositeShader, scaleGlowShader, blurShader, finalShader, tiltShiftShader;
+var glowTexture, diffuseTexture, pumpkinObj;
+
+function initScene() {
+
+	// 0 - 11, tops
+	// 12 - 23 bodies
+	var max = 0;
+
+	pumpkinObj.children.forEach( function( m ) {
+		max = Math.max( max, m.geometry.attributes.position.count );
+		max = Math.max( max, m.geometry.attributes.normal.count );
+		max = Math.max( max, m.geometry.attributes.uv.count );
+	});
+
+	var width = Maf.nextPowerOfTwo( max );
+	var height = Maf.nextPowerOfTwo( pumpkinObj.children.length * 3 );
+	console.log( width, height );
+
+	var data = new Float32Array( width * 4 * height );
+	var ptr = 0;
+	var topOffsets = [
+		new THREE.Vector3( 4, 48, 2 ),
+		new THREE.Vector3( -4, 38, -2 ),
+		new THREE.Vector3( 5, 37, -3 ),
+		new THREE.Vector3( 5, 33, 0 ),
+		new THREE.Vector3( 0, 31, -10 ),
+		new THREE.Vector3( -6, 21, -1 ),
+		new THREE.Vector3( .5, 22, -1.5 ),
+		new THREE.Vector3( 4.5, 20.5, -1 ),
+		new THREE.Vector3( 3.5, 14, -5 ),
+		new THREE.Vector3( 0, 18, -1 ),
+		new THREE.Vector3( 1, 16, 0 ),
+		new THREE.Vector3( 2.5, 12, -1.5 )
+	];
+	pumpkinObj.children.forEach( function( m, i ) {
+
+		var geo = m.geometry;
+		geo.center();
+		if( i < 12 ) {
+			var translateMatrix = new THREE.Matrix4();
+			translateMatrix.makeTranslation( topOffsets[ i ].x, topOffsets[ i ].y, topOffsets[ i ].z );
+			geo.applyMatrix( translateMatrix );
+		}
+
+		for( var j = 0, j1 = 0; j < geo.attributes.position.count * 4; j += 3, j1 += 4 ){
+			data[ ptr + j1 ] = geo.attributes.position.array[ j ];
+			data[ ptr + j1 + 1 ] = geo.attributes.position.array[ j + 1 ];
+			data[ ptr + j1 + 2 ] = geo.attributes.position.array[ j + 2 ];
+		}
+		ptr += width * 4;
+
+		for( var j = 0, j1 = 0; j < geo.attributes.normal.count * 4; j += 3, j1 += 4 ){
+			data[ ptr + j1 ] = geo.attributes.normal.array[ j ];
+			data[ ptr + j1 + 1 ] = geo.attributes.normal.array[ j + 1 ];
+			data[ ptr + j1 + 2 ] = geo.attributes.normal.array[ j + 2 ];
+		}
+		ptr += width * 4;
+
+		for( var j = 0, j1 = 0; j < geo.attributes.uv.count * 4; j += 2, j1 += 4 ){
+			data[ ptr + j1 ] = geo.attributes.uv.array[ j ];
+			data[ ptr + j1 + 1 ] = geo.attributes.uv.array[ j + 1 ];
+		}
+		ptr += width * 4;
+
+	});
+
+	geometryTexture = new THREE.DataTexture(
+		data,
+		width,
+		height,
+		THREE.RGBAFormat,
+		THREE.FloatType,
+		null,
+		THREE.ClampToEdgeWrapping,
+		THREE.ClampToEdgeWrapping,
+		THREE.NearestFilter,
+		THREE.NearestFilter
+	);
+	geometryTexture.needsUpdate = true;
+
+	helper.attach( geometryTexture, 'Geometry' );
+
+	var pw = Maf.nextPowerOfTwo( Math.sqrt( PUMPKINS ) );
+	var ph = pw;
+
+	console.log( pw, ph );
+
+	var positionData = new Float32Array( pw * 4 * ph );
+	for( var j = 0; j < positionData.length; j += 4 ) {
+		positionData[ j ] = Maf.randomInRange( -100, 100 );
+		positionData[ j + 1 ] = Maf.randomInRange( -100, 100 );
+		positionData[ j + 2 ] = Maf.randomInRange( -100, 100 );
+		positionData[ j + 3 ] = Maf.randomInRange( .5, 1 );
+	}
+
+	pumpkinPositionsTexture = new THREE.DataTexture(
+		positionData,
+		pw,
+		ph,
+		THREE.RGBAFormat,
+		THREE.FloatType,
+		null,
+		THREE.ClampToEdgeWrapping,
+		THREE.ClampToEdgeWrapping,
+		THREE.NearestFilter,
+		THREE.NearestFilter
+	);
+	pumpkinPositionsTexture.needsUpdate = true;
+
+	var positionShader = new THREE.RawShaderMaterial( {
+		uniforms:{
+			time: { type: 'f', value: 0 },
+			inputTexture: { type: 't', value: null },
+			origin: { type: 't', value: pumpkinPositionsTexture },
+			offset: { type: 'v3', value: new THREE.Vector3( 0, 0, 0 ) },
+			inverseModelViewMatrix: { type: 'm4', value: new THREE.Matrix4() },
+			FFTMap: { type: 't', value: spectrumTexture },
+			infoMap: { type: 't', value: null }
+		},
+		vertexShader: document.getElementById( 'position-vs' ).textContent,
+		fragmentShader: document.getElementById( 'position-fs' ).textContent,
+		depthTest: false,
+		depthWrite: false
+	} );
+
+	positionSim = new GPUSim( renderer, pw, ph, positionShader );
+
+	helper.attach( positionSim.fbos[ 0 ], 'Position FBO#0' );
+	helper.attach( positionSim.fbos[ 1 ], 'Position FBO#1' );
+
+	helper.attach( pumpkinPositionsTexture, 'Positions' );
+
+	var l = ( 426 + 768 );
+	var positions = new Float32Array( l * pw * ph * 2 );
+	var id = -1;
+	var p = 0;
+	var p2 = 0;
+	infoData = new Float32Array( pw * ph * 3 );
+
+	for( var j = 0; j < positions.length; j += 2 ) {
+		if( j % ( l * 2 ) === 0 ) {
+			id++;
+			infoData[ p2 ] = ~~(Math.random()*12); // modelId
+			infoData[ p2 + 1 ] = .25 * Math.random(); // FFT frequency
+			infoData[ p2 + 2 ] = ~~( Math.random() * 4 ); // Texture
+			p2 += 3;
+		}
+		positions[ j ] = p % ( 426 + 768 ); // vertexId
+		positions[ j + 1 ] = id; // instanceId
+
+		p++;
+	}
+
+	infoTexture = new THREE.DataTexture( infoData, pw, ph, THREE.RGBFormat, THREE.FloatType );
+	infoTexture.minFilter = THREE.NearestFilter;
+	infoTexture.magFilter = THREE.NearestFilter;
+	infoTexture.needsUpdate = true;
+
+	helper.attach( infoTexture, 'Info' );
+
+	var geometry = new THREE.BufferGeometry();
+	geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 2 ) );
+
+	pumpkinsMaterial = new THREE.RawShaderMaterial({
+		uniforms: {
+			positions: { type: 't', value: pumpkinPositionsTexture },
+			prevPositions: { type: 't', value: pumpkinPositionsTexture },
+			geometry: { type: 't', value: geometryTexture },
+			posDimensions: { type: 'v2', value: new THREE.Vector2( pw, ph ) },
+			origin: { type: 't', value: pumpkinPositionsTexture },
+			map: { type: 't', value: diffuseTexture },
+			glowMap: { type: 't', value: glowTexture },
+			FFTMap: { type: 't', value: spectrumTexture },
+			infoMap: { type: 't', value: infoTexture },
+			time: { type: 'f', value: 0 },
+			lighting: { type: 'f', value: 0 }
+		},
+		vertexShader: document.getElementById('pumpkin-vs').textContent,
+		fragmentShader: document.getElementById('pumpkin-fs').textContent,
+		side: THREE.BackSide,
+		transparent: true
+	});
+	pumpkinsMesh = new THREE.Mesh( geometry, pumpkinsMaterial );
+	scene.add( pumpkinsMesh );
+	pumpkinsMesh.frustumCulled = false
+
+	positionShader.uniforms.infoMap.value = infoTexture;
+
+	renderer.render( scene, camera );
+
+	container.style.display = 'block';
+	onWindowResized();
+	animate();
+
+	if( userSong ) {
+		closeInfo();
+		resetSound();
+		getSong( userSong );
+	} else {
+		infoPanel.classList.remove( 'hidden' );
+	}
+
+}
 
 function init() {
 
@@ -828,210 +1405,27 @@ function init() {
 	intersectionPlane.material.visible = false;
 	scene.add( intersectionPlane );
 
-	helper = new THREE.FBOHelper( renderer );
+	helper = new FBOHelper( renderer );
+//	document.getElementById( 'fboh-fbos-list' ).style.display = 'none';
 
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-	var texLoader = new THREE.TextureLoader();
-	var glowTexture = texLoader.load( 'assets/pumpkins_glow.jpg' );
+	var manager = new THREE.LoadingManager( function() {
+		loader.style.display = 'none';
+		requestAnimationFrame( initScene );
 
-	var texture = texLoader.load( 'assets/all.jpg', function( res ) {
+	});
+	manager.onProgress = function ( item, loaded, total ) {
 
-		var material = new THREE.MeshBasicMaterial( {
-		} );
+		loader.innerHTML = 'Loading ... ' + ( loaded * 100 / total ).toFixed( 0 ) + '%';
 
-		var loader = new THREE.OBJLoader();
-		loader.load( 'assets/all.obj', function( res ) {
+	};
 
-			// 0 - 11, tops
-			// 12 - 23 bodies
-			var max = 0;
-
-			res.children.forEach( function( m ) {
-				max = Math.max( max, m.geometry.attributes.position.count );
-				max = Math.max( max, m.geometry.attributes.normal.count );
-				max = Math.max( max, m.geometry.attributes.uv.count );
-			});
-
-			var width = Maf.nextPowerOfTwo( max );
-			var height = Maf.nextPowerOfTwo( res.children.length * 3 );
-			console.log( width, height );
-
-			var data = new Float32Array( width * 4 * height );
-			var ptr = 0;
-			var topOffsets = [
-				new THREE.Vector3( 4, 48, 2 ),
-				new THREE.Vector3( -4, 38, -2 ),
-				new THREE.Vector3( 5, 37, -3 ),
-				new THREE.Vector3( 5, 33, 0 ),
-				new THREE.Vector3( 0, 31, -10 ),
-				new THREE.Vector3( -6, 21, -1 ),
-				new THREE.Vector3( .5, 22, -1.5 ),
-				new THREE.Vector3( 4.5, 20.5, -1 ),
-				new THREE.Vector3( 3.5, 14, -5 ),
-				new THREE.Vector3( 0, 18, -1 ),
-				new THREE.Vector3( 1, 16, 0 ),
-				new THREE.Vector3( 2.5, 12, -1.5 )
-			];
-			res.children.forEach( function( m, i ) {
-
-				var geo = m.geometry;
-				geo.center();
-				if( i < 12 ) {
-					var translateMatrix = new THREE.Matrix4();
-					translateMatrix.makeTranslation( topOffsets[ i ].x, topOffsets[ i ].y, topOffsets[ i ].z );
-					geo.applyMatrix( translateMatrix );
-				}
-
-				for( var j = 0, j1 = 0; j < geo.attributes.position.count * 4; j += 3, j1 += 4 ){
-					data[ ptr + j1 ] = geo.attributes.position.array[ j ];
-					data[ ptr + j1 + 1 ] = geo.attributes.position.array[ j + 1 ];
-					data[ ptr + j1 + 2 ] = geo.attributes.position.array[ j + 2 ];
-				}
-				ptr += width * 4;
-
-				for( var j = 0, j1 = 0; j < geo.attributes.normal.count * 4; j += 3, j1 += 4 ){
-					data[ ptr + j1 ] = geo.attributes.normal.array[ j ];
-					data[ ptr + j1 + 1 ] = geo.attributes.normal.array[ j + 1 ];
-					data[ ptr + j1 + 2 ] = geo.attributes.normal.array[ j + 2 ];
-				}
-				ptr += width * 4;
-
-				for( var j = 0, j1 = 0; j < geo.attributes.uv.count * 4; j += 2, j1 += 4 ){
-					data[ ptr + j1 ] = geo.attributes.uv.array[ j ];
-					data[ ptr + j1 + 1 ] = geo.attributes.uv.array[ j + 1 ];
-				}
-				ptr += width * 4;
-
-			});
-
-			geometryTexture = new THREE.DataTexture(
-				data,
-				width,
-				height,
-				THREE.RGBAFormat,
-				THREE.FloatType,
-				null,
-				THREE.ClampToEdgeWrapping,
-				THREE.ClampToEdgeWrapping,
-				THREE.NearestFilter,
-				THREE.NearestFilter
-			);
-			geometryTexture.needsUpdate = true;
-
-			helper.attach( geometryTexture, 'Geometry' );
-
-			var pw = Maf.nextPowerOfTwo( Math.sqrt( PUMPKINS ) );
-			var ph = pw;
-
-			console.log( pw, ph );
-
-			var positionData = new Float32Array( pw * 4 * ph );
-			for( var j = 0; j < positionData.length; j += 4 ) {
-				positionData[ j ] = Maf.randomInRange( -100, 100 );
-				positionData[ j + 1 ] = Maf.randomInRange( -100, 100 );
-				positionData[ j + 2 ] = Maf.randomInRange( -100, 100 );
-				positionData[ j + 3 ] = Maf.randomInRange( .5, 1 );
-			}
-
-			pumpkinPositionsTexture = new THREE.DataTexture(
-				positionData,
-				pw,
-				ph,
-				THREE.RGBAFormat,
-				THREE.FloatType,
-				null,
-				THREE.ClampToEdgeWrapping,
-				THREE.ClampToEdgeWrapping,
-				THREE.NearestFilter,
-				THREE.NearestFilter
-			);
-			pumpkinPositionsTexture.needsUpdate = true;
-
-			var positionShader = new THREE.RawShaderMaterial( {
-				uniforms:{
-					time: { type: 'f', value: 0 },
-					inputTexture: { type: 't', value: null },
-					origin: { type: 't', value: pumpkinPositionsTexture },
-					offset: { type: 'v3', value: new THREE.Vector3( 0, 0, 0 ) },
-					inverseModelViewMatrix: { type: 'm4', value: new THREE.Matrix4() },
-					FFTMap: { type: 't', value: spectrumTexture },
-					infoMap: { type: 't', value: null }
-				},
-				vertexShader: document.getElementById( 'position-vs' ).textContent,
-				fragmentShader: document.getElementById( 'position-fs' ).textContent,
-				depthTest: false,
-				depthWrite: false
-			} );
-
-			positionSim = new GPUSim( renderer, pw, ph, positionShader );
-
-			helper.attach( positionSim.fbos[ 0 ], 'Position FBO#0' );
-			helper.attach( positionSim.fbos[ 1 ], 'Position FBO#1' );
-
-			helper.attach( pumpkinPositionsTexture, 'Positions' );
-
-			var l = ( 426 + 768 );
-			var positions = new Float32Array( l * pw * ph * 2 );
-			var id = -1;
-			var p = 0;
-			var p2 = 0;
-			infoData = new Float32Array( pw * ph * 3 );
-
-			for( var j = 0; j < positions.length; j += 2 ) {
-				if( j % ( l * 2 ) === 0 ) {
-					id++;
-					infoData[ p2 ] = ~~(Math.random()*12); // modelId
-					infoData[ p2 + 1 ] = .25 * Math.random(); // FFT frequency
-					infoData[ p2 + 2 ] = ~~( Math.random() * 4 ); // Texture
-					p2 += 3;
-				}
-				positions[ j ] = p % ( 426 + 768 ); // vertexId
-				positions[ j + 1 ] = id; // instanceId
-
-				p++;
-			}
-
-			infoTexture = new THREE.DataTexture( infoData, pw, ph, THREE.RGBFormat, THREE.FloatType );
-			infoTexture.minFilter = THREE.NearestFilter;
-			infoTexture.magFilter = THREE.NearestFilter;
-			infoTexture.needsUpdate = true;
-
-			helper.attach( infoTexture, 'Info' );
-
-			var geometry = new THREE.BufferGeometry();
-			geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 2 ) );
-
-			pumpkinsMaterial = new THREE.RawShaderMaterial({
-				uniforms: {
-					positions: { type: 't', value: pumpkinPositionsTexture },
-					prevPositions: { type: 't', value: pumpkinPositionsTexture },
-					geometry: { type: 't', value: geometryTexture },
-					posDimensions: { type: 'v2', value: new THREE.Vector2( pw, ph ) },
-					origin: { type: 't', value: pumpkinPositionsTexture },
-					map: { type: 't', value: texture },
-					glowMap: { type: 't', value: glowTexture },
-					FFTMap: { type: 't', value: spectrumTexture },
-					infoMap: { type: 't', value: infoTexture },
-					time: { type: 'f', value: 0 }
-				},
-				vertexShader: document.getElementById('pumpkin-vs').textContent,
-				fragmentShader: document.getElementById('pumpkin-fs').textContent,
-				side: THREE.BackSide,
-				transparent: true
-			});
-			pumpkinsMesh = new THREE.Mesh( geometry, pumpkinsMaterial );
-			scene.add( pumpkinsMesh );
-			pumpkinsMesh.frustumCulled = false
-
-			positionShader.uniforms.infoMap.value = infoTexture;
-
-			initScene();
-			animate();
-
-		});
-
-	} )
+	var texLoader = new THREE.TextureLoader( manager );
+	glowTexture = texLoader.load( 'assets/pumpkins_glow.jpg' );
+	diffuseTexture = texLoader.load( 'assets/all-low.jpg' );
+	var objLoader = new THREE.OBJLoader( manager );
+	objLoader.load( 'assets/all.obj', function( res ){ pumpkinObj = res; } );
 
 	compositeFBO = createRenderTarget();
 	glowFBO = createRenderTarget();
@@ -1125,7 +1519,6 @@ function init() {
 	helper.attach( spectrumTexture, 'FFT' );
 
 	window.addEventListener( 'resize', onWindowResized );
-	onWindowResized();
 
 }
 
@@ -1183,6 +1576,7 @@ window.addEventListener( 'keydown', e => {
 */
 
 var blur = 4;
+var clearColor = new THREE.Color();
 
 function animate() {
 
@@ -1192,7 +1586,7 @@ function animate() {
 	if( demo ) {
 		camera.position.set( -415.5524380445112, -41.77221542187185, 131.023180431145 );
 		camera.lookAt( scene.position );
-		mouse.set( -.5, 0 );
+		mouse.set( -.05, 0 );
 	}
 
 	intersectionPlane.lookAt( camera.position );
@@ -1211,6 +1605,11 @@ function animate() {
 	var t = performance.now();
 	var dt = ( t - lastTime ) / 1000;
 	lastTime = t;
+
+	var c = Maf.mix( 0x20, 0xff, lighting ) / 255.;
+	clearColor.setRGB( c, c, c );
+	renderer.setClearColor( clearColor );
+	pumpkinsMaterial.uniforms.lighting.value = lighting;
 
 	if( run ) {
 
@@ -1252,6 +1651,15 @@ function animate() {
 }
 
 </script>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8&appId=404776652982935";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 
 	</body>
 </html>
