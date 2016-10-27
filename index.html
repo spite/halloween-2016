@@ -37,14 +37,14 @@
 			}
 			#info{
 				position: absolute;
-				left: 10px; top: 10px;
+				right: 10px; top: 10px;
 			}
 		</style>
 	</head>
 	<body>
 
 		<div id="container"></div>
-		<div id="info" ></div>
+		<div id="info" ><a id="startButton" href="#" >Start</a></div>
 
 		<script src="js/three.js"></script>
 		<script src="js/OrbitControls.js"></script>
@@ -81,6 +81,9 @@ void main() {
 
 <script type="x-shader/x-fragment" id="position-fs" >
 precision highp float;
+
+// perlin noise from
+// https://github.com/ashima/webgl-noise
 
 vec3 mod289(vec3 x) {
 	return x - floor(x * (1.0 / 289.0)) * 289.0;
@@ -215,6 +218,9 @@ vec3 snoiseVec3( vec3 x ){
 
 }
 
+// curl noise from
+// https://github.com/cabbibo/glsl-curl-noise
+
 vec3 curlNoise( vec3 p ){
 
   const float e = .1;
@@ -255,6 +261,8 @@ uniform sampler2D inputTexture;
 uniform sampler2D infoMap;
 uniform sampler2D FFTMap;
 
+uniform vec3 cameraPosition;
+
 varying vec2 vUv;
 varying vec3 vOffset;
 
@@ -273,9 +281,20 @@ void main() {
 		pos = vOffset + ( rotationMatrix( vec3( 0., 1., 0. ), time ) * vec4( or.rgb, 1. ) ).xyz;
 	}
 
-	pos += ( .1 + 2. * freq ) * curlNoise( .004 * pos + 1. * time ) / or.a;
-	life += .05 * freq * or.a;
+	pos += ( .1 + 2. * freq ) * curlNoise( .002 * pos + 10. * time ) / or.a;
+	life += .1 * freq * or.a;
 	if( life > 50. ) life = 0.;
+
+	float radius = 200.;
+	if( length( pos ) < radius ) {
+		pos = normalize( pos ) * radius;
+	}
+
+	float safeRadius = 200.;
+	if( length( pos - cameraPosition ) < safeRadius ) {
+		pos = cameraPosition + normalize( pos - cameraPosition ) * safeRadius;
+	}
+
 
 	gl_FragColor = vec4( pos, life );
 
@@ -344,14 +363,13 @@ void main() {
 	float offsetY = 0.;
 	if( vertexId < 426. ) {
 		uv = vec2( vertexId / w, ( model * 3. ) / 128. );
-		offsetY = ( .5 + .5 * sin( freq * 2. * M_PI ) ) * freq * 50.;
+		offsetY = ( .5 + .5 * sin( freq * 2. * M_PI ) ) * freq * 30.;
 	} else {
 		uv = vec2( ( vertexId - 426. ) / w, ( ( 12. + model ) * 3. ) / 128. );
 	}
 
-	float scale = or.a;//or.a * clamp( parabola( pumpkinPos.a / 50., 1. ), 0., .1 );
+	float scale = 3. * or.a * clamp( parabola( pumpkinPos.a / 50., 1. ), 0., .1 );
 
-	pumpkinPos = vec4( 0. );
 	vec4 p = pumpkinPos + localRotation * vec4( scale * texture2D( geometry, uv ).rgb + vec3( 0., offsetY, 0. ), 1. );
 	vNormal = ( localRotation * texture2D( geometry, uv + vec2( 0., 1. / 128. ) ) ).rgb;
 	vUv = texture2D( geometry, uv + vec2( 0., 2. / 128. ) ).rg;
@@ -377,13 +395,41 @@ varying vec2 vUv;
 varying vec3 vNormal;
 varying float vRim;
 
+// fogexp2 from
+// https://www.npmjs.com/package/glsl-fog
+
+float fogFactorExp(
+  const float dist,
+  const float density
+) {
+  return 1.0 - clamp(exp(-density * dist), 0.0, 1.0);
+}
+
+
+float fogFactorExp2(
+  const float dist,
+  const float density
+) {
+  const float LOG2 = -1.442695;
+  float d = density * dist;
+  return 1.0 - clamp(exp2(d * d * LOG2), 0.0, 1.0);
+}
+
 void main(){
 
 	vec4 c = texture2D( map, vUv );
 	vec4 a = texture2D( glowMap, vUv );
-	float rim = pow( vRim, 3. );
+	float rim = pow( vRim, 5. );
 
-	gl_FragColor = vec4( .75 * c.rgb + .5 * a.rgb + c.rgb * rim, 1. );
+	float fogDistance = gl_FragCoord.z / gl_FragCoord.w;
+	float fogAmount = 1. - fogFactorExp(fogDistance, .0015);
+	float fogAmount2 = 1. - fogFactorExp(fogDistance, .00015 );
+
+	c.rgb += c.rgb * rim;
+
+	vec3 fogColor = vec3( 32. ) / 255.;
+
+	gl_FragColor = vec4( mix( fogColor, c.rgb, fogAmount ) + a.rgb * fogAmount2, 1. );
 
 }
 
@@ -421,7 +467,7 @@ void main(){
 	vec4 c = texture2D( inputTexture, vUv );
 	vec4 g = texture2D( glowTexture, vUv );
 
-	gl_FragColor = vec4( c.rgb + 2. * g.rgb, 1. );
+	gl_FragColor = vec4( .75 * c.rgb + g.rgb, 1. );
 
 }
 </script>
@@ -436,7 +482,7 @@ varying vec2 vUv;
 void main(){
 
 	vec4 c = texture2D( inputTexture, vUv );
-	gl_FragColor = vec4( smoothstep( vec3( .5 ), vec3( 1. ), c.rgb ), 1. );
+	gl_FragColor = vec4( smoothstep( vec3( .45 ), vec3( 1. ), c.rgb ), 1. );
 
 }
 
@@ -484,7 +530,7 @@ varying vec2 vUv;
 void main(){
 
 	vec4 sum = vec4( 0. );
-	vec2 inc = vec2( .005 * abs( .5 - vUv ) );
+	vec2 inc = vec2( 0., .005 * abs( .5 - vUv.y ) );
 
 	sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
 	sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
@@ -589,8 +635,10 @@ void main() {
 
 'use strict';
 
-var PUMPKINS = 1;
+var PUMPKINS = window.location.hash.substr( 1 ) || 1000;
 var helper;
+
+var demo = !true;
 
 var container, renderer, camera, controls, scene,
 	mesh, geometry, material;
@@ -629,8 +677,12 @@ function getSong() {
 		audio.play();
 	});
 }
-getMicrophone();
-//getSong();
+//getMicrophone();
+getSong();
+
+document.getElementById( 'startButton' ).addEventListener( 'click', function( e ) {
+	audio.play();
+})
 
 function process(){
 
@@ -972,6 +1024,7 @@ function init() {
 			});
 			pumpkinsMesh = new THREE.Mesh( geometry, pumpkinsMaterial );
 			scene.add( pumpkinsMesh );
+			pumpkinsMesh.frustumCulled = false
 
 			positionShader.uniforms.infoMap.value = infoTexture;
 
@@ -1124,12 +1177,18 @@ window.addEventListener( 'keydown', e => {
 	WEBGL_draw_buffers is available on 50% of hardware :/
 */
 
-var blur = 2;
+var blur = 4;
 
 function animate() {
 
 	process();
 	controls.update();
+
+	if( demo ) {
+		camera.position.set( -415.5524380445112, -41.77221542187185, 131.023180431145 );
+		camera.lookAt( scene.position );
+		mouse.set( -.5, 0 );
+	}
 
 	intersectionPlane.lookAt( camera.position );
 
