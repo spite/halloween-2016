@@ -1,4 +1,14 @@
-( () => {
+;(function() {
+
+	"use strict";
+
+	var root = this
+
+	var has_require = typeof require !== 'undefined'
+
+	var THREE = root.THREE || has_require && require('three')
+	if( !THREE )
+		throw new Error( 'FBOHelper requires three.js' )
 
 "use strict";
 
@@ -252,6 +262,7 @@ class FBOHelper {
 	hide() {
 
 		this.hideAll();
+		this.info.style.display = 'none';
 		this.grid.style.display = 'none';
 		this.currentObj = null;
 
@@ -306,7 +317,7 @@ class FBOHelper {
 				this.grid.style.width = ( fboData.width + 2 ) + 'px';
 				this.grid.style.height = ( fboData.height + 2 ) + 'px';
 				this.currentObj = fboData;
-				this.info.innerHTML = `Width: ${fbo.width} Height: ${fbo.height}<br/>Format: ${formats[fbo.texture ? fbo.texture.format : fbo.format]} Type: ${types[fbo.texture ? fbo.texture.type : fbo.type]}`;
+				this.info.innerHTML = `Width: ${fbo.width} Height: ${fbo.height}<br/>Format: ${formats[fbo.texture.format]} Type: ${types[fbo.texture.type]}`;
 			} else {
 				this.info.style.display = 'none';
 				li.classList.remove( 'active' );
@@ -404,7 +415,7 @@ class FBOHelper {
 		types[ THREE.UnsignedShort5551Type ] = Uint16Array;
 		types[ THREE.UnsignedShort565Type ] = Uint16Array;
 
-		var type = types[ fbo.texture ? fbo.texture.type : fbo.type ];
+		var type = types[ fbo.texture.type ];
 		if( type === null ) {
 			console.warning( fbo.texture.type + ' not supported' );
 			return;
@@ -412,7 +423,7 @@ class FBOHelper {
 
 		const pixelBuffer = new ( type )( 4 );
 
-		renderer.readRenderTargetPixels( fbo, x, y, 1, 1, pixelBuffer );
+		this.renderer.readRenderTargetPixels( fbo, x, y, 1, 1, pixelBuffer );
 		const posTxt = `X : ${x} Y: ${y} u: ${u} v: ${v}`;
 		const dataTxt = obj.formatter ?
 			obj.formatter( {
@@ -449,6 +460,15 @@ class FBOHelper {
 
 }
 
-THREE.FBOHelper = FBOHelper;
+if( typeof exports !== 'undefined' ) {
+	if( typeof module !== 'undefined' && module.exports ) {
+		exports = module.exports = FBOHelper
+	}
+	exports.FBOHelper = FBOHelper
+}
+else {
+	root.FBOHelper = FBOHelper
+}
 
-})();
+}).call(this);
+
