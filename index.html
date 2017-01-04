@@ -704,10 +704,17 @@ uniform vec2 resolution;
 
 varying vec2 vUv;
 
+float smootherstep(float edge0, float edge1, float x) {
+
+    x = clamp((x - edge0)/(edge1 - edge0), 0.0, 1.0);
+    return x*x*x*(x*(x*6. - 15.) + 10.);
+
+}
+
 void main(){
 
 	vec4 sum = vec4( 0. );
-	vec2 inc = vec2( 0., .005 * abs( .5 - vUv.y ) );
+	vec2 inc = vec2( 0., .005 * smootherstep( 0., .75, abs( .5 - vUv.y ) ) );
 
 	sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
 	sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
