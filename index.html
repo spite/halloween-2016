@@ -1,241 +1,251 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<title>Pumpkin Jam - Halloween 2016</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-		<meta property="og:url" content="https://www.clicktorelease.com/code/pumpkin-jam" />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="This is my pumpkin jam!" />
-		<meta property="og:description" content="A silly Halloween-themed stravaganza" />
-		<meta property="og:image" content="https://www.clicktorelease.com/code/pumpkin-jam/image.jpg" />
+<head>
+  <title>Pumpkin Jam - Halloween 2016</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta property="og:url" content="https://www.clicktorelease.com/code/pumpkin-jam" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="This is my pumpkin jam!" />
+  <meta property="og:description" content="A silly Halloween-themed stravaganza" />
+  <meta property="og:image" content="https://www.clicktorelease.com/code/pumpkin-jam/image.jpg" />
+  <style>
+    *{
+        box-sizing: border-box;
+        font-family: 'Roboto Slab', sans-serif;
+        font-size: 13px;
+        font-weight: 100;
+        margin :0;
+        padding: 0;
+      }
+      html {
+        height: 100%;
+      }
+      #unsupported-warning{
+        display: none;
+        position: absolute;
+        left: 0; top: 50%;
+        margin-top: -1em;
+        right: 0; text-align: center;
+        padding: 0 40px;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #202020;
+        color: #ffffff;
+        line-height: 20px;
+        height: 100%;
+        overflow: hidden;
+        font-family: 'Roboto Slab', sans-serif;
+        font-size: 13px;
+        font-weight: 100;
+        text-shadow: 0 1px 0 rgba(0,0,0,.6);
+      }
+      strong{
+        font-weight: bold;
+      }
+      #container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+      }
+      #songPanel{
+        position: absolute;
+        left: 70px;
+        top: 10px;
+        right: 0;
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 250ms ease-out;
+      }
+      #songPanel.hidden{
+        opacity: 0;
+        pointer-events: none;
+      }
+      #button{
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        border: 2px solid white;
+        border-radius: 100%;
+        padding: 20px;
+        line-height: 0;
+        opacity: .5;
+        pointer-events: auto;
+        transition: transform 400ms ease-out, opacity 200ms ease-out, background-color 100ms ease-out;
+        cursor: pointer;
+      }
+      #button:hover{
+        opacity: 1;
+        background-color: rgba(255,255,255,.5);
+      }
+      #button.hidden{
+        opacity: .15;
+        pointer-events: none;
+      }
+      #button::after{
+        content: "i";
+        position: absolute;
+        left: 50%;
+        transform: translate3d( -50%, -50%, 0 );
+      }
+      #content{
+        position: absolute; left: 0; top: 0;
+        display:flex;justify-content:center;align-items:center;width:100%;height:100%;
+        opacity: 1;
+        pointer-events: auto;
+        transition: transform 400ms ease-out, opacity 200ms ease-out;
+      }
+      #loader{
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      #info.hidden{
+        opacity: 0;
+        pointer-events: none
+      }
+      #info{
+        transition: opacity 300ms ease-out;
+        text-align: center;
+        height: 500px;
+      }
+      #info a, #songInfo a{
+        color: inherit;
+        text-decoration: none;
+        opacity: .5;
+        border-bottom: 1px solid rgba( 255,255,255,1);
+      }
+      #info a:hover{
+        opacity: 1;
+      }
+      #info input[type=text]{
+        outline: none;
+        background-color: transparent;
+        border: 1px solid #ddd;
+        color: inherit;
+        padding: 4px;
+        width: 200px;
+        transition: width 200ms ease-out ;
+      }
+      #info input[type=text]:focus{
+        width: 400px;
+      }
+      #info .title{
+        margin-bottom: 2em;
+      }
+      #content.hidden{
+        opacity: 0;
+        pointer-events: none;
+        transform: translate3d( -50%, -50%, 0 ) scale3d(.5,.5,.5);
+      }
+      #tabs a.active{
+        border: none;
+        opacity: 1;
+        font-weight: bold;
+      }
+      #songIfno{
+        position: absolute; left: 0;
+        top: 0;
+      }
+      #sharePanel{
+        position: absolute; left: 0;
+        top: 50px;
+      }
+      .button{ color: white; font-weight: 300; font-size: 10px; line-height: 20px; width: 70px; display: inline-block; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 3px; height: 20px; pointer-events: auto; padding: 0;}
+      #shareFacebookBtn{ background-color: #1072d5;}
+      #shareTwitterBtn{ background-color: #20c2ea }
+      #shareFacebookBtn:hover{ background-color: #157de4; }
+      #shareTwitterBtn:hover{ background-color: #10cbfa; }
+      #fboh-fbos-list{ display: none !important;}
+      #play {
+        position: absolute; left: 0; top: 0; right: 0; bottom: 0; pointer-events: auto; color: white; cursor: pointer; display: none;
+      }
+      #play p {
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      }
+    </style>
+</head>
 
-		<style>
-			*{
-				box-sizing: border-box;
-				font-family: 'Roboto Slab', sans-serif;
-				font-size: 13px;
-				font-weight: 100;
-				margin :0;
-				padding: 0;
-			}
-			html {
-				height: 100%;
-			}
-			#unsupported-warning{
-				display: none;
-				position: absolute;
-				left: 0; top: 50%;
-				margin-top: -1em;
-				right: 0; text-align: center;
-				padding: 0 40px;
-			}
-			body {
-				margin: 0;
-				padding: 0;
-				background-color: #202020;
-				color: #ffffff;
-				line-height: 20px;
-				height: 100%;
-				overflow: hidden;
-				font-family: 'Roboto Slab', sans-serif;
-				font-size: 13px;
-				font-weight: 100;
-				text-shadow: 0 1px 0 rgba(0,0,0,.6);
-			}
-			strong{
-				font-weight: bold;
-			}
-			#container {
-				position: absolute;
-				left: 0;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				display: none;
-			}
-			#songPanel{
-				position: absolute;
-				left: 70px;
-				top: 10px;
-				right: 0;
-				opacity: 1;
-				pointer-events: auto;
-				transition: opacity 250ms ease-out;
-			}
-			#songPanel.hidden{
-				opacity: 0;
-				pointer-events: none;
-			}
-			#button{
-				position: absolute;
-				left: 15px;
-				top: 10px;
-				border: 2px solid white;
-				border-radius: 100%;
-				padding: 20px;
-				line-height: 0;
-				opacity: .5;
-				pointer-events: auto;
-				transition: transform 400ms ease-out, opacity 200ms ease-out, background-color 100ms ease-out;
-				cursor: pointer;
-			}
-			#button:hover{
-				opacity: 1;
-				background-color: rgba(255,255,255,.5);
-			}
-			#button.hidden{
-				opacity: .15;
-				pointer-events: none;
-			}
-			#button::after{
-				content: "i";
-				position: absolute;
-				left: 50%;
-				transform: translate3d( -50%, -50%, 0 );
-			}
-			#content{
-				position: absolute; left: 0; top: 0;
-				display:flex;justify-content:center;align-items:center;width:100%;height:100%;
-				opacity: 1;
-				pointer-events: auto;
-				transition: transform 400ms ease-out, opacity 200ms ease-out;
-			}
-			#loader{
-				position: absolute;
-				left: 0;
-				right: 0;
-				text-align: center;
-			}
-			#info.hidden{
-				opacity: 0;
-				pointer-events: none
-			}
-			#info{
-				transition: opacity 300ms ease-out;
-				text-align: center;
-				height: 500px;
-			}
-			#info a, #songInfo a{
-				color: inherit;
-				text-decoration: none;
-				opacity: .5;
-				border-bottom: 1px solid rgba( 255,255,255,1);
-			}
-			#info a:hover{
-				opacity: 1;
-			}
-			#info input[type=text]{
-				outline: none;
-				background-color: transparent;
-				border: 1px solid #ddd;
-				color: inherit;
-				padding: 4px;
-				width: 200px;
-				transition: width 200ms ease-out ;
-			}
-			#info input[type=text]:focus{
-				width: 400px;
-			}
-			#info .title{
-				margin-bottom: 2em;
-			}
-			#content.hidden{
-				opacity: 0;
-				pointer-events: none;
-				transform: translate3d( -50%, -50%, 0 ) scale3d(.5,.5,.5);
-			}
-			#tabs a.active{
-				border: none;
-				opacity: 1;
-				font-weight: bold;
-			}
-			#songIfno{
-				position: absolute; left: 0;
-				top: 0;
-			}
-			#sharePanel{
-				position: absolute; left: 0;
-				top: 50px;
-			}
-			.button{ color: white; font-weight: 300; font-size: 10px; line-height: 20px; width: 70px; display: inline-block; text-transform: uppercase; text-align: center; text-decoration: none; border-radius: 3px; height: 20px; pointer-events: auto; padding: 0;}
-			#shareFacebookBtn{ background-color: #1072d5;}
-			#shareTwitterBtn{ background-color: #20c2ea }
-			#shareFacebookBtn:hover{ background-color: #157de4; }
-			#shareTwitterBtn:hover{ background-color: #10cbfa; }
-			#fboh-fbos-list{ display: none !important;}
-		</style>
-	</head>
-	<body>
-
-		<div id="container"></div>
-		<div id="content" >
-			<div id="loader" >Loading...</div>
-			<div id="info" class="hidden" >
-				<img class="title" src="assets/title.png" width="200px" height="100px" />
-				<p id="tabs"><a data-tab="about" class="active" href="#">Welcome!</a> · <a data-tab="settings" href="#">Controls</a> · <a data-tab="credits" href="#">Credits</a></p><br/>
-				<div class="panel" id="credits" style="display:none">
-					<p><strong>A silly Halloween-themed stravaganza</strong></p>
-					<p>Pumpkin-based music visualisation using WebGL and Web Audio</p><br/>
-					<p>Jaume Sanchez <a href="https://twitter.com/thespite" >@thespite</a> · <a href="https://www.clicktorelease.com">www.clicktorelease.com</a></p><br/>
-					<p>3D models and textures by BitGem <a href="https://shop.bitgem3d.com/products/halloween-pumpkins" >Halloween Pumpkins</a></p><br/>
-					<p>Made with <a href="https://threejs.org/" >three.js</a>, <a href="https://github.com/spite/Maf.js" >Maf.js</a>, <a href="https://github.com/spite/THREE.FBOHelper" >THREE.FBOHelper</a>, <a href="https://github.com/kaimallea/isMobile" >isMobile</a></p><br/>
-					<p>Curl noise from <a href="https://github.com/cabbibo/glsl-curl-noise" >glsl-curl-noise</a> by <a href="https://twitter.com/cabbibo" >@cabbibo</a></p>
-					<p>Fog equation adapted from <a href="https://www.npmjs.com/package/glsl-fog">glsl-fog</a> by <a href="https://twitter.com/hughskennedy" >@hughskennedy</a></p>
-					<p>Kick detection adapted from <a href="http://jsantell.github.io/dancer.js/" >dancer.js</a> by <a href="https://twitter.com/jsantell" >@jsantell</a></p>
-					<p>GLSL Perlin noise from <a href="https://github.com/ashima/webgl-noise/" >webgl-noise</a></p><br/>
-					<p>Source code on GitHub: <a href="https://github.com/spite/halloween-2016">Halloween-2016</a></p>
-					<br/>
-				</div>
-				<div class="panel" id="about" >
-					<p><strong>Select a song</strong></p>
-					<p><a id="startMusic1" href="#" >DJ True Story - Electro Swing Mix</a></p>
-					<p><a id="startMusic2" href="#" >MegaDrive - I Am The Program</a></p>
-					<br/>
-					<p>or enter your own<br/><input type="text" id="songURL" placeholder="SoundCloud URL"><br/><a id="playMusic" href="#" >Play</a></p>
-					<br/>
-					<p><a id="startMic" href="#" >or use your microphone</a><br/>(Asks for permission)</p><br/>
-					<p>You can share the URL with the selected song with your friends!</p>
-					<br/>
-				</div>
-				<div class="panel" id="settings" style="display:none">
-					<p>You can pause and resume the song<br/>with the control right next to the title</p><br/>
-					<p>Press space to pause movement</p><br/>
-					<p>Demo mode locks the camera</p>
-					<p><input type="checkbox" id="demoMode" checked > <label for="demoMode" >Demo mode</label></p><br/>
-					<p>Demo mode disabled allows you to:</p>
-					<p>Click and drag to rotate camera</p>
-					<p>Zoom in and out with scroll</p>
-					<br/>
-				</div>
-				<p><a href="#" id="closeInfo">Close</a></p>
-			</div>
-		</div>
-		<div id="button" class="hidden"></div>
-		<div id="songPanel" class="hidden" >
-			<div id="songInfo" ></div>
-			<div id="sharePanel">
-				<a href="#" id="shareTwitterBtn" class="button" >Twitter</a>
-				<a href="#" id="shareFacebookBtn" class="button" >Facebook</a>
-			</div>
-		</div>
-		<div id="unsupported-warning" >Mobile and tablet are unsupported at the moment<br/>Sorry, I coded this in two nights, I'd need more time to get mobile ready!</div>
-		<div id="fb-root"></div>
-
-		<script src="js/three.js"></script>
-		<script src="js/OrbitControls.js"></script>
-		<script src="js/OBJLoader.js"></script>
-		<script src="js/Maf.js"></script>
-		<script src="js/EquirectangularToCubemap.js"></script>
-		<script src="js/THREE.FBOHelper.js"></script>
-		<script src="js/Kick.js"></script>
-		<script src="js/isMobile.min.js"></script>
-
-		<script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
-
-<script id="position-vs" type="x-shader/x-vertex" >
-precision highp float;
+<body>
+  <div id="container"></div>
+  <div id="content">
+    <div id="loader">Loading...</div>
+    <div id="info" class="hidden">
+      <img class="title" src="assets/title.png" width="200px" height="100px" />
+      <p id="tabs"><a data-tab="about" class="active" href="#">Welcome!</a> · <a data-tab="settings" href="#">Controls</a>
+        · <a data-tab="credits" href="#">Credits</a></p><br />
+      <div class="panel" id="credits" style="display:none">
+        <p><strong>A silly Halloween-themed stravaganza</strong></p>
+        <p>Pumpkin-based music visualisation using WebGL and Web Audio</p><br />
+        <p>Jaume Sanchez <a href="https://twitter.com/thespite">@thespite</a> · <a href="https://www.clicktorelease.com">www.clicktorelease.com</a></p><br />
+        <p>3D models and textures by BitGem <a href="https://shop.bitgem3d.com/products/halloween-pumpkins">Halloween
+            Pumpkins</a></p><br />
+        <p>Made with <a href="https://threejs.org/">three.js</a>, <a href="https://github.com/spite/Maf.js">Maf.js</a>,
+          <a href="https://github.com/spite/THREE.FBOHelper">THREE.FBOHelper</a>, <a href="https://github.com/kaimallea/isMobile">isMobile</a></p><br />
+        <p>Curl noise from <a href="https://github.com/cabbibo/glsl-curl-noise">glsl-curl-noise</a> by <a href="https://twitter.com/cabbibo">@cabbibo</a></p>
+        <p>Fog equation adapted from <a href="https://www.npmjs.com/package/glsl-fog">glsl-fog</a> by <a href="https://twitter.com/hughskennedy">@hughskennedy</a></p>
+        <p>Kick detection adapted from <a href="http://jsantell.github.io/dancer.js/">dancer.js</a> by <a href="https://twitter.com/jsantell">@jsantell</a></p>
+        <p>GLSL Perlin noise from <a href="https://github.com/ashima/webgl-noise/">webgl-noise</a></p><br />
+        <p>Source code on GitHub: <a href="https://github.com/spite/halloween-2016">Halloween-2016</a></p>
+        <br />
+      </div>
+      <div class="panel" id="about">
+        <p><strong>Select a song</strong></p>
+        <p><a id="startMusic1" href="#">DJ True Story - Electro Swing Mix</a></p>
+        <p><a id="startMusic2" href="#">MegaDrive - I Am The Program</a></p>
+        <br />
+        <p>or enter your own<br /><input type="text" id="songURL" placeholder="SoundCloud URL"><br /><a id="playMusic"
+            href="#">Play</a></p>
+        <br />
+        <p><a id="startMic" href="#">or use your microphone</a><br />(Asks for permission)</p><br />
+        <p>You can share the URL with the selected song with your friends!</p>
+        <br />
+      </div>
+      <div class="panel" id="settings" style="display:none">
+        <p>You can pause and resume the song<br />with the control right next to the title</p><br />
+        <p>Press space to pause movement</p><br />
+        <p>Demo mode locks the camera</p>
+        <p><input type="checkbox" id="demoMode" checked> <label for="demoMode">Demo mode</label></p><br />
+        <p>Demo mode disabled allows you to:</p>
+        <p>Click and drag to rotate camera</p>
+        <p>Zoom in and out with scroll</p>
+        <br />
+      </div>
+      <p><a href="#" id="closeInfo">Close</a></p>
+    </div>
+  </div>
+  <div id="button" class="hidden"></div>
+  <div id="songPanel" class="hidden">
+    <div id="songInfo"></div>
+    <div id="sharePanel">
+      <a href="#" id="shareTwitterBtn" class="button">Twitter</a>
+      <a href="#" id="shareFacebookBtn" class="button">Facebook</a>
+    </div>
+  </div>
+  <div id="unsupported-warning">Mobile and tablet are unsupported at the moment<br />Sorry, I coded this in two nights,
+    I'd need more time to get mobile ready!</div>
+  <div id="fb-root"></div>
+  <div id="play">
+    <p>Click to start</p>
+  </div>
+  <script src="js/three.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <script src="js/OBJLoader.js"></script>
+  <script src="js/Maf.js"></script>
+  <script src="js/EquirectangularToCubemap.js"></script>
+  <script src="js/THREE.FBOHelper.js"></script>
+  <script src="js/Kick.js"></script>
+  <script src="js/isMobile.min.js"></script>
+  <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+  <script id="position-vs" type="x-shader/x-vertex">
+    precision highp float;
 
 attribute vec3 position;
 attribute vec2 uv;
@@ -251,88 +261,87 @@ varying vec3 vOffset;
 
 void main() {
 
-	vOffset = ( inverseModelViewMatrix * vec4( offset, 1. ) ).xyz;
-	vUv = uv;
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
+  vOffset = ( inverseModelViewMatrix * vec4( offset, 1. ) ).xyz;
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
 
 }
 </script>
-
-<script type="x-shader/x-fragment" id="position-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="position-fs">
+    precision highp float;
 
 // perlin noise from
 // https://github.com/ashima/webgl-noise
 
 vec3 mod289(vec3 x) {
-	return x - floor(x * (1.0 / 289.0)) * 289.0;
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 vec4 mod289(vec4 x) {
-	return x - floor(x * (1.0 / 289.0)) * 289.0;
+  return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 vec4 permute(vec4 x) {
-	return mod289(((x*34.0)+1.0)*x);
+  return mod289(((x*34.0)+1.0)*x);
 }
 vec4 taylorInvSqrt(vec4 r){
-	return 1.79284291400159 - 0.85373472095314 * r;
+  return 1.79284291400159 - 0.85373472095314 * r;
 }
 float snoise(vec3 v) {
-	const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
-	const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
-	// First corner
-	vec3 i  = floor(v + dot(v, C.yyy) );
-	vec3 x0 =   v - i + dot(i, C.xxx) ;
-	// Other corners
-	vec3 g = step(x0.yzx, x0.xyz);
-	vec3 l = 1.0 - g;
-	vec3 i1 = min( g.xyz, l.zxy );
-	vec3 i2 = max( g.xyz, l.zxy );
-	//   x0 = x0 - 0.0 + 0.0 * C.xxx;
-	//   x1 = x0 - i1  + 1.0 * C.xxx;
-	//   x2 = x0 - i2  + 2.0 * C.xxx;
-	//   x3 = x0 - 1.0 + 3.0 * C.xxx;
-	vec3 x1 = x0 - i1 + C.xxx;
-	vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
-	vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
-	// Permutations
-	i = mod289(i);
-	vec4 p = permute( permute( permute(
-		  i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
-		+ i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
-		+ i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
-	// Gradients: 7x7 points over a square, mapped onto an octahedron.
-	// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
-	float n_ = 0.142857142857; // 1.0/7.0
-	vec3  ns = n_ * D.wyz - D.xzx;
-	vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
-	vec4 x_ = floor(j * ns.z);
-	vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
-	vec4 x = x_ *ns.x + ns.yyyy;
-	vec4 y = y_ *ns.x + ns.yyyy;
-	vec4 h = 1.0 - abs(x) - abs(y);
-	vec4 b0 = vec4( x.xy, y.xy );
-	vec4 b1 = vec4( x.zw, y.zw );
-	//vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
-	//vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
-	vec4 s0 = floor(b0)*2.0 + 1.0;
-	vec4 s1 = floor(b1)*2.0 + 1.0;
-	vec4 sh = -step(h, vec4(0.0));
-	vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-	vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
-	vec3 p0 = vec3(a0.xy,h.x);
-	vec3 p1 = vec3(a0.zw,h.y);
-	vec3 p2 = vec3(a1.xy,h.z);
-	vec3 p3 = vec3(a1.zw,h.w);
-	//Normalise gradients
-	vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-	p0 *= norm.x;
-	p1 *= norm.y;
-	p2 *= norm.z;
-	p3 *= norm.w;
-	// Mix final noise value
-	vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-	m = m * m;
-	return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+  // First corner
+  vec3 i  = floor(v + dot(v, C.yyy) );
+  vec3 x0 =   v - i + dot(i, C.xxx) ;
+  // Other corners
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min( g.xyz, l.zxy );
+  vec3 i2 = max( g.xyz, l.zxy );
+  //   x0 = x0 - 0.0 + 0.0 * C.xxx;
+  //   x1 = x0 - i1  + 1.0 * C.xxx;
+  //   x2 = x0 - i2  + 2.0 * C.xxx;
+  //   x3 = x0 - 1.0 + 3.0 * C.xxx;
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
+  // Permutations
+  i = mod289(i);
+  vec4 p = permute( permute( permute(
+      i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+    + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
+    + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+  // Gradients: 7x7 points over a square, mapped onto an octahedron.
+  // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+  float n_ = 0.142857142857; // 1.0/7.0
+  vec3  ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+  vec4 x = x_ *ns.x + ns.yyyy;
+  vec4 y = y_ *ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4( x.xy, y.xy );
+  vec4 b1 = vec4( x.zw, y.zw );
+  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
+  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
+  vec4 s0 = floor(b0)*2.0 + 1.0;
+  vec4 s1 = floor(b1)*2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+  vec3 p0 = vec3(a0.xy,h.x);
+  vec3 p1 = vec3(a0.zw,h.y);
+  vec3 p2 = vec3(a1.xy,h.z);
+  vec3 p3 = vec3(a1.zw,h.w);
+  //Normalise gradients
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+  // Mix final noise value
+  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
 }
 
 vec4 snoiseD(vec3 v) { //returns vec4(value, dx, dy, dz)
@@ -424,14 +433,14 @@ vec3 curlNoise( vec3 p ){
 }
 
 mat4 rotationMatrix(vec3 axis, float angle) {
-	axis = normalize(axis);
-	float s = sin(angle);
-	float c = cos(angle);
-	float oc = 1.0 - c;
-	return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-	            oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-	            oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-	            0.0,                                0.0,                                0.0,                                1.0);
+  axis = normalize(axis);
+  float s = sin(angle);
+  float c = cos(angle);
+  float oc = 1.0 - c;
+  return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+              oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+              oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+              0.0,                                0.0,                                0.0,                                1.0);
 }
 
 uniform float time;
@@ -447,42 +456,40 @@ varying vec3 vOffset;
 
 void main() {
 
-	vec4 c = texture2D( inputTexture, vUv );
-	vec4 or = texture2D( origin, vUv );
-	vec4 i = texture2D( infoMap, vUv );
-	float freq = texture2D( FFTMap, vec2( i.y, 0. ) ).r;
-	freq = smoothstep( .6, .8, freq );
+  vec4 c = texture2D( inputTexture, vUv );
+  vec4 or = texture2D( origin, vUv );
+  vec4 i = texture2D( infoMap, vUv );
+  float freq = texture2D( FFTMap, vec2( i.y, 0. ) ).r;
+  freq = smoothstep( .6, .8, freq );
 
-	vec3 pos = c.xyz;
-	float life = c.a;
+  vec3 pos = c.xyz;
+  float life = c.a;
 
-	if( life == 0. ) {
-		pos = vOffset + ( rotationMatrix( vec3( 0., 1., 0. ), time ) * vec4( or.rgb, 1. ) ).xyz;
-	}
+  if( life == 0. ) {
+    pos = vOffset + ( rotationMatrix( vec3( 0., 1., 0. ), time ) * vec4( or.rgb, 1. ) ).xyz;
+  }
 
-	pos += ( .1 + 2. * freq ) * curlNoise( .002 * pos + 10. * time ) / or.a;
-	life += .1 * freq * or.a;
-	if( life > 50. ) life = 0.;
+  pos += ( .1 + 2. * freq ) * curlNoise( .002 * pos + 10. * time ) / or.a;
+  life += .1 * freq * or.a;
+  if( life > 50. ) life = 0.;
 
-	float radius = 200.;
-	if( length( pos ) < radius ) {
-		pos = normalize( pos ) * radius;
-	}
+  float radius = 200.;
+  if( length( pos ) < radius ) {
+    pos = normalize( pos ) * radius;
+  }
 
-	float safeRadius = 200.;
-	if( length( pos - cameraPosition ) < safeRadius ) {
-		pos = cameraPosition + normalize( pos - cameraPosition ) * safeRadius;
-	}
+  float safeRadius = 200.;
+  if( length( pos - cameraPosition ) < safeRadius ) {
+    pos = cameraPosition + normalize( pos - cameraPosition ) * safeRadius;
+  }
 
-	gl_FragColor = vec4( pos, life );
+  gl_FragColor = vec4( pos, life );
 
 }
 
 </script>
-
-<script type="x-shader/x-vertex" id="pumpkin-vs" >
-
-attribute vec2 position;
+  <script type="x-shader/x-vertex" id="pumpkin-vs">
+    attribute vec2 position;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
@@ -504,74 +511,73 @@ varying float vTexture;
 varying float vBass;
 
 mat3 calcLookAtMatrix(vec3 origin, vec3 target, float roll) {
-	vec3 rr = vec3(sin(roll), cos(roll), 0.0);
-	vec3 ww = normalize(target - origin);
-	vec3 uu = normalize(cross(ww, rr));
-	vec3 vv = normalize(cross(uu, ww));
-	return mat3(uu, vv, ww);
+  vec3 rr = vec3(sin(roll), cos(roll), 0.0);
+  vec3 ww = normalize(target - origin);
+  vec3 uu = normalize(cross(ww, rr));
+  vec3 vv = normalize(cross(uu, ww));
+  return mat3(uu, vv, ww);
 }
 
 float rand(vec2 co){
-	return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
 float parabola( float x, float k ) {
-	return pow( 4. * x * ( 1. - x ), k );
+  return pow( 4. * x * ( 1. - x ), k );
 }
 
 #define M_PI 3.1415926535897932384626433832795
 
 void main() {
 
-	vec2 uv;
+  vec2 uv;
 
-	float instanceId = position.y;
-	vec2 pUv = vec2(
-		mod( instanceId, posDimensions.x ) / posDimensions.x + .5 / posDimensions.x,
-		floor( instanceId / posDimensions.x ) / posDimensions.y + .5 / posDimensions.y
-	);
-	vec4 pumpkinInfo = texture2D( infoMap, pUv );
-	vTexture = pumpkinInfo.z;
-	float freq = texture2D( FFTMap, vec2( pumpkinInfo.y, 0. ) ).r;
-	vBass = .5 + .5 * smoothstep( .6, .8, freq );
-	vec4 pumpkinPos = texture2D( positions, pUv );
-	vec4 prevPmpkinPos = texture2D( prevPositions, pUv );
-	mat4 localRotation = mat4( calcLookAtMatrix( prevPmpkinPos.xyz, pumpkinPos.xyz, .25 * freq * sin( freq * time ) ) );
-	vec4 or = texture2D( origin, pUv );
+  float instanceId = position.y;
+  vec2 pUv = vec2(
+    mod( instanceId, posDimensions.x ) / posDimensions.x + .5 / posDimensions.x,
+    floor( instanceId / posDimensions.x ) / posDimensions.y + .5 / posDimensions.y
+  );
+  vec4 pumpkinInfo = texture2D( infoMap, pUv );
+  vTexture = pumpkinInfo.z;
+  float freq = texture2D( FFTMap, vec2( pumpkinInfo.y, 0. ) ).r;
+  vBass = .5 + .5 * smoothstep( .6, .8, freq );
+  vec4 pumpkinPos = texture2D( positions, pUv );
+  vec4 prevPmpkinPos = texture2D( prevPositions, pUv );
+  mat4 localRotation = mat4( calcLookAtMatrix( prevPmpkinPos.xyz, pumpkinPos.xyz, .25 * freq * sin( freq * time ) ) );
+  vec4 or = texture2D( origin, pUv );
 
-	float w = 1024.;
-	float model = pumpkinInfo.x;
-	float vertexId = position.x;
-	float offsetY = 0.;
-	if( vertexId < 426. ) {
-		uv = vec2( vertexId / w, ( model * 3. ) / 128. );
-		offsetY = ( .5 + .5 * sin( freq * 2. * M_PI ) ) * freq * 30.;
-	} else {
-		uv = vec2( ( vertexId - 426. ) / w, ( ( 12. + model ) * 3. ) / 128. );
-	}
+  float w = 1024.;
+  float model = pumpkinInfo.x;
+  float vertexId = position.x;
+  float offsetY = 0.;
+  if( vertexId < 426. ) {
+    uv = vec2( vertexId / w, ( model * 3. ) / 128. );
+    offsetY = ( .5 + .5 * sin( freq * 2. * M_PI ) ) * freq * 30.;
+  } else {
+    uv = vec2( ( vertexId - 426. ) / w, ( ( 12. + model ) * 3. ) / 128. );
+  }
 
-	float scale = 3. * or.a * clamp( parabola( pumpkinPos.a / 50., 1. ), 0., .1 );
+  float scale = 3. * or.a * clamp( parabola( pumpkinPos.a / 50., 1. ), 0., .1 );
 
-	vec3 vertex = texture2D( geometry, uv ).rgb;
-	vec4 p = pumpkinPos + localRotation * vec4( scale * vertex + vec3( 0., offsetY, 0. ), 1. );
-	vNormal = ( localRotation * texture2D( geometry, uv + vec2( 0., 1. / 128. ) ) ).rgb;
-	vUv = texture2D( geometry, uv + vec2( 0., 2. / 128. ) ).rg;
+  vec3 vertex = texture2D( geometry, uv ).rgb;
+  vec4 p = pumpkinPos + localRotation * vec4( scale * vertex + vec3( 0., offsetY, 0. ), 1. );
+  vNormal = ( localRotation * texture2D( geometry, uv + vec2( 0., 1. / 128. ) ) ).rgb;
+  vUv = texture2D( geometry, uv + vec2( 0., 2. / 128. ) ).rg;
 
-	vec3 e = normalize( vec3( modelViewMatrix * p ) );
-	vec3 n = normalize( normalMatrix * vNormal );
+  vec3 e = normalize( vec3( modelViewMatrix * p ) );
+  vec3 n = normalize( normalMatrix * vNormal );
 
-	vRim = 1. - abs( dot( n, e ) );
-	vec3 nor = ( localRotation * vec4( n, 1. ) ).xyz;
-	vRim += .1 * smoothstep( 0.0, 0.8, -nor.y );
+  vRim = 1. - abs( dot( n, e ) );
+  vec3 nor = ( localRotation * vec4( n, 1. ) ).xyz;
+  vRim += .1 * smoothstep( 0.0, 0.8, -nor.y );
 
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( p.xyz, 1. );
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( p.xyz, 1. );
 
 }
 
 </script>
-
-<script type="x-shader/x-fragment" id="pumpkin-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="pumpkin-fs">
+    precision highp float;
 
 uniform sampler2D map;
 uniform sampler2D glowMap;
@@ -592,28 +598,27 @@ float fogFactorExp( const float dist, const float density ) {
 
 void main(){
 
-	vec2 uv2 = vUv / vec2( 1., 4. ) + vec2( 0., vTexture / 4. );
+  vec2 uv2 = vUv / vec2( 1., 4. ) + vec2( 0., vTexture / 4. );
 
-	vec4 c = texture2D( map, uv2 );
-	vec4 a = texture2D( glowMap, vUv );
-	float rim = pow( vRim, 5. );
+  vec4 c = texture2D( map, uv2 );
+  vec4 a = texture2D( glowMap, vUv );
+  float rim = pow( vRim, 5. );
 
-	float fogDistance = gl_FragCoord.z / gl_FragCoord.w;
-	float fogAmount = 1. - fogFactorExp(fogDistance, .0015);
-	float fogAmount2 = 1. - fogFactorExp(fogDistance, .00015 );
+  float fogDistance = gl_FragCoord.z / gl_FragCoord.w;
+  float fogAmount = 1. - fogFactorExp(fogDistance, .0015);
+  float fogAmount2 = 1. - fogFactorExp(fogDistance, .00015 );
 
-	c.rgb += c.rgb * rim;
+  c.rgb += c.rgb * rim;
 
-	vec3 fogColor = vec3( 32. ) / 255.;
+  vec3 fogColor = vec3( 32. ) / 255.;
 
-	gl_FragColor = vec4( ( 1. - lighting ) * mix( fogColor, c.rgb, fogAmount ) + ( vBass + lighting ) * a.rgb * fogAmount2, 1. );
+  gl_FragColor = vec4( ( 1. - lighting ) * mix( fogColor, c.rgb, fogAmount ) + ( vBass + lighting ) * a.rgb * fogAmount2, 1. );
 
 }
 
 </script>
-
-<script type="x-shader/x-shader" id="ortho-vs" >
-precision highp float;
+  <script type="x-shader/x-shader" id="ortho-vs">
+    precision highp float;
 
 attribute vec3 position;
 attribute vec2 uv;
@@ -625,14 +630,13 @@ varying vec2 vUv;
 
 void main() {
 
-	vUv = uv;
-	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1. );
 
 }
 </script>
-
-<script type="x-shader/x-fragment" id="composite-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="composite-fs">
+    precision highp float;
 
 uniform sampler2D inputTexture;
 uniform sampler2D glowTexture;
@@ -641,16 +645,15 @@ varying vec2 vUv;
 
 void main(){
 
-	vec4 c = texture2D( inputTexture, vUv );
-	vec4 g = texture2D( glowTexture, vUv );
+  vec4 c = texture2D( inputTexture, vUv );
+  vec4 g = texture2D( glowTexture, vUv );
 
-	gl_FragColor = vec4( 1. * c.rgb + .5 * g.rgb, 1. );
+  gl_FragColor = vec4( 1. * c.rgb + .5 * g.rgb, 1. );
 
 }
 </script>
-
-<script type="x-shader/x-fragment" id="scale-glow-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="scale-glow-fs">
+    precision highp float;
 
 uniform sampler2D inputTexture;
 
@@ -658,16 +661,14 @@ varying vec2 vUv;
 
 void main(){
 
-	vec4 c = texture2D( inputTexture, vUv );
-	gl_FragColor = vec4( smoothstep( vec3( .45 ), vec3( 1. ), c.rgb ), 1. );
+  vec4 c = texture2D( inputTexture, vUv );
+  gl_FragColor = vec4( smoothstep( vec3( .45 ), vec3( 1. ), c.rgb ), 1. );
 
 }
 
 </script>
-
-<script type="x-shader/x-fragment" id="blur-fs" >
-
-precision highp float;
+  <script type="x-shader/x-fragment" id="blur-fs">
+    precision highp float;
 
 uniform sampler2D inputTexture;
 uniform vec2 resolution;
@@ -677,27 +678,26 @@ varying vec2 vUv;
 
 void main(){
 
-	vec4 sum = vec4( 0. );
-	vec2 inc = delta / resolution;
+  vec4 sum = vec4( 0. );
+  vec2 inc = delta / resolution;
 
-	sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
-	sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
-	sum += texture2D( inputTexture, ( vUv - inc * 2. ) ) * 0.12245;
-	sum += texture2D( inputTexture, ( vUv - inc * 1. ) ) * 0.1531;
-	sum += texture2D( inputTexture, ( vUv + inc * 0. ) ) * 0.1633;
-	sum += texture2D( inputTexture, ( vUv + inc * 1. ) ) * 0.1531;
-	sum += texture2D( inputTexture, ( vUv + inc * 2. ) ) * 0.12245;
-	sum += texture2D( inputTexture, ( vUv + inc * 3. ) ) * 0.0918;
-	sum += texture2D( inputTexture, ( vUv + inc * 4. ) ) * 0.051;
+  sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
+  sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
+  sum += texture2D( inputTexture, ( vUv - inc * 2. ) ) * 0.12245;
+  sum += texture2D( inputTexture, ( vUv - inc * 1. ) ) * 0.1531;
+  sum += texture2D( inputTexture, ( vUv + inc * 0. ) ) * 0.1633;
+  sum += texture2D( inputTexture, ( vUv + inc * 1. ) ) * 0.1531;
+  sum += texture2D( inputTexture, ( vUv + inc * 2. ) ) * 0.12245;
+  sum += texture2D( inputTexture, ( vUv + inc * 3. ) ) * 0.0918;
+  sum += texture2D( inputTexture, ( vUv + inc * 4. ) ) * 0.051;
 
-	gl_FragColor = sum;
+  gl_FragColor = sum;
 
 }
 
 </script>
-
-<script type="x-shader/x-fragment" id="tilt-shift-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="tilt-shift-fs">
+    precision highp float;
 
 uniform sampler2D inputTexture;
 uniform vec2 resolution;
@@ -713,26 +713,25 @@ float smootherstep(float edge0, float edge1, float x) {
 
 void main(){
 
-	vec4 sum = vec4( 0. );
-	vec2 inc = vec2( 0., .005 * smootherstep( 0., .75, abs( .5 - vUv.y ) ) );
+  vec4 sum = vec4( 0. );
+  vec2 inc = vec2( 0., .005 * smootherstep( 0., .75, abs( .5 - vUv.y ) ) );
 
-	sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
-	sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
-	sum += texture2D( inputTexture, ( vUv - inc * 2. ) ) * 0.12245;
-	sum += texture2D( inputTexture, ( vUv - inc * 1. ) ) * 0.1531;
-	sum += texture2D( inputTexture, ( vUv + inc * 0. ) ) * 0.1633;
-	sum += texture2D( inputTexture, ( vUv + inc * 1. ) ) * 0.1531;
-	sum += texture2D( inputTexture, ( vUv + inc * 2. ) ) * 0.12245;
-	sum += texture2D( inputTexture, ( vUv + inc * 3. ) ) * 0.0918;
-	sum += texture2D( inputTexture, ( vUv + inc * 4. ) ) * 0.051;
+  sum += texture2D( inputTexture, ( vUv - inc * 4. ) ) * 0.051;
+  sum += texture2D( inputTexture, ( vUv - inc * 3. ) ) * 0.0918;
+  sum += texture2D( inputTexture, ( vUv - inc * 2. ) ) * 0.12245;
+  sum += texture2D( inputTexture, ( vUv - inc * 1. ) ) * 0.1531;
+  sum += texture2D( inputTexture, ( vUv + inc * 0. ) ) * 0.1633;
+  sum += texture2D( inputTexture, ( vUv + inc * 1. ) ) * 0.1531;
+  sum += texture2D( inputTexture, ( vUv + inc * 2. ) ) * 0.12245;
+  sum += texture2D( inputTexture, ( vUv + inc * 3. ) ) * 0.0918;
+  sum += texture2D( inputTexture, ( vUv + inc * 4. ) ) * 0.051;
 
-	gl_FragColor = sum;
+  gl_FragColor = sum;
 
 }
 </script>
-
-<script type="x-shader/x-fragment" id="final-fs" >
-precision highp float;
+  <script type="x-shader/x-fragment" id="final-fs">
+    precision highp float;
 
 uniform sampler2D inputTexture;
 uniform vec2 resolution;
@@ -750,7 +749,7 @@ varying vec2 vUv;
 #define FXAA_SPAN_MAX     8.0
 
 float random(vec2 n, float offset ){
-	return .5 - fract(sin(dot(n.xy + vec2( offset, 0. ), vec2(12.9898, 78.233)))* 43758.5453);
+  return .5 - fract(sin(dot(n.xy + vec2( offset, 0. ), vec2(12.9898, 78.233)))* 43758.5453);
 }
 
 void main() {
@@ -799,7 +798,7 @@ void main() {
     }
 
     vec2 center = resolution * 0.5;
-	float vignette = distance( center, gl_FragCoord.xy ) / resolution.x;
+  float vignette = distance( center, gl_FragCoord.xy ) / resolution.x;
     vignette = boost - vignette * reduction;
 
     color.rgb *= vignette;
@@ -814,858 +813,855 @@ void main() {
 }
 
 </script>
+  <script>
+  'use strict';
+
+  var tabMenu = document.getElementById('tabs');
+  var tabs = {};
+  for (var j = 0; j < tabMenu.children.length; j++) {
+    var link = tabMenu.children[j];
+    var tabId = link.getAttribute('data-tab');
+    tabs[tabId] = document.getElementById(tabId);
+    link.addEventListener('click', function(e) {
+      var c = 0;
+      for (var j in tabs) {
+        tabs[j].style.display = 'none';
+        tabMenu.children[c].classList.remove('active');
+        c++;
+      }
+      tabs[this.getAttribute('data-tab')].style.display = 'block';
+      this.classList.add('active');
+      e.preventDefault();
+    }.bind(link));
+  }
+
+  var PUMPKINS;
+  var userSong;
+  // hash: { p: num, u: url }
+  function parseHash() {
+
+    var hash = window.location.hash.substr(1);
+
+    const regex = /(\S)=([^&]*)/g;
+    const str = hash;
+    let m;
+
+    var reload = false;
+
+    while ((m = regex.exec(str)) !== null) {
+      if (m.index === regex.lastIndex) {
+        regex.lastIndex++;
+      }
+
+      var varName = m[1];
+      var varValue = m[2];
+
+      if (varName === 'p') {
+        varValue = parseInt(varValue, 10);
+        if (PUMPKINS !== undefined && varValue !== PUMPKINS) {
+          reload = true;
+        }
+        PUMPKINS = varValue;
+      }
+      if (varName === 'u') userSong = decodeURIComponent(varValue);
+
+    }
+
+    if (reload) {
+      window.location.reload();
+    }
+
+  }
+
+  parseHash();
+
+  PUMPKINS = PUMPKINS || 1000;
+
+  window.addEventListener('hashchange', function(e) {
+    userSong = null;
+    parseHash();
+    if (userSong) getSong(userSong);
+  });
+
+  var helper;
+
+  var demo = true;
+
+  var container, renderer, camera, controls, scene,
+    mesh, geometry, material;
+
+  var container = document.getElementById('container');
+
+  var id = 'b1275b704badf79d972d51aa4b92ea15';
+
+  SC.initialize({
+    client_id: id
+  });
+
+  if ('webkitAudioContext' in window) {
+    var AudioContext = webkitAudioContext;
+  }
+
+  var raycaster = new THREE.Raycaster();
+  var mouse = new THREE.Vector2();
+
+  var audio = document.createElement('audio');
+  audio.loop = true;
+  audio.autoplay = true;
+  audio.crossOrigin = '';
+  var context = new AudioContext();
+  var analyser = context.createAnalyser();
+  analyser.fftSize = 256;
+  var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+
+  var songSource = context.createMediaElementSource(audio);
+  songSource.connect(analyser);
+  songSource.connect(context.destination);
+
+  var kick = new Kick({
+    frequency: [5, 20],
+    decay: 0.04,
+    onKick: function() {
+      lighting = 1;
+    },
+    offKick: function() {
+      lighting *= .95;
+    }
+  });
+  kick.on();
+
+  var spectrumTexture = new THREE.DataTexture(frequencyData, .5 * frequencyData.length, 1, THREE.LuminanceFormat);
+  spectrumTexture.minFilter = THREE.NearestFilter;
+  spectrumTexture.magFilter = THREE.NearestFilter;
+  spectrumTexture.needsUpdate = true;
+
+  var microphone;
+
+  function resetSound() {
+    if (microphone) {
+      microphone.disconnect();
+    }
+    if (songSource) {
+      songSource.disconnect();
+    }
+  }
+
+  var songPanel = document.getElementById('songPanel');
+  var songInfo = document.getElementById('songInfo');
+  var sharePanel = document.getElementById('sharePanel');
+
+  function getSong(songURL) {
+    SC.resolve(songURL).then(function(song) {
+      songInfo.innerHTML = '<p><b><a href="' + song.permalink_url + '" >' + song.title +
+        '</a> <a href="#" id="pauseBtn" >PAUSE</a></b><br/><a href="' + song.user.permalink_url + '">' + song.user.username +
+        '</a></p>'
+      audio.src = song.stream_url + "?client_id=" + id;
+
+      songSource.connect(analyser);
+      songSource.connect(context.destination);
+      songPanel.classList.remove('hidden');
+
+      document.getElementById('pauseBtn').addEventListener('click', function(e) {
+        if (audio.paused) {
+          this.textContent = 'PAUSE';
+          audio.play();
+        } else {
+          this.textContent = 'PLAY';
+          audio.pause();
+        }
+        e.preventDefault();
+      });
+
+      var baseUrl = 'https://www.clicktorelease.com/code/pumpkin-jam'
+      var url = baseUrl + '#p=' + PUMPKINS + '&u=' + encodeURIComponent(songURL);
+      shareFacebookBtn.onclick = function(e) {
+
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url),
+          'facebook-share-dialog', 'width=626,height=436');
+        return false;
+      }
+
+      shareTwitterBtn.onclick = function(e) {
+
+        var msg = 'This is my pumpkin jam! ' + url;
+        window.open('https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent(url) + '&text=' +
+          encodeURIComponent(msg), 'twitter-share-dialog', 'width=626,height=436');
+        return false;
+      }
+
+      requestAnimationFrame(start);
+    });
+  }
+
+  function getMicrophone() {
+
+    if (microphone) {
+      microphone.connect(analyser);
+      return;
+    }
+
+    navigator.getUserMedia({ audio: true }, function(stream) {
+
+        microphone = context.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        start();
+
+      },
+      function(err) {});
+
+  }
+
+  var content = document.getElementById('content');
+  var infoPanel = document.getElementById('info');
+  var loaderPanel = document.getElementById('loader');
+  var infoButton = document.getElementById('button');
+  document.getElementById('button').addEventListener('click', function(e) {
+    content.classList.remove('hidden');
+    infoButton.classList.add('hidden');
+    infoPanel.classList.remove('hidden');
+  });
+
+  function closeInfo() {
+    content.classList.add('hidden');
+    infoButton.classList.remove('hidden');
+  }
+  document.getElementById('closeInfo').addEventListener('click', function(e) {
+    closeInfo();
+  });
+
+  var playing = false;
+
+  function start() {
+    context.resume();
+    if (playing) return;
+    playing = true;
+  }
+
+  function setSong(url) {
+    closeInfo();
+    resetSound();
+    var hash = '#p=' + PUMPKINS + '&u=' + encodeURIComponent(url);
+    window.location.hash = hash;
+  }
+
+  document.getElementById('startMusic1').addEventListener('click', function(e) {
+    setSong('https://soundcloud.com/djtruestory/electro-swing');
+    e.preventDefault();
+  })
+
+  document.getElementById('startMusic2').addEventListener('click', function(e) {
+    setSong('https://soundcloud.com/megadrivemusic/i-am-the-program');
+    e.preventDefault();
+  })
+
+  document.getElementById('startMic').addEventListener('click', function(e) {
+    getMicrophone();
+    e.preventDefault();
+  })
+
+  document.getElementById('playMusic').addEventListener('click', function(e) {
+    var url = document.getElementById('songURL').value;
+    setSong(url);
+    e.preventDefault();
+  })
+
+  document.getElementById('demoMode').addEventListener('click', function(e) {
+    demo = this.checked;
+  })
+
+  document.getElementById('play').addEventListener('click', function(e) {
+    context.resume();
+    audio.play();
+    document.getElementById('play').style.display = 'none';
+  })
+
+  var lighting = 0;
+
+  function process() {
+
+    analyser.getByteFrequencyData(frequencyData);
+    spectrumTexture.needsUpdate = true;
+    kick.onUpdate();
+
+  }
+
+  function createFBO(width, height) {
+
+    var fbo = new THREE.WebGLRenderTarget(width, height, {
+      wrapS: THREE.ClampToEdgeWrapping,
+      wrapT: THREE.ClampToEdgeWrapping,
+      minFilter: THREE.NearestFilter,
+      magFilter: THREE.NearestFilter,
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType,
+      stencilBuffer: false,
+      depthBuffer: false
+    });
+
+    fbo.texture.generateMipmaps = false;
+
+    return fbo;
+
+  }
+
+  function GPUSim(renderer, width, height, shader) {
+
+    this.renderer = renderer;
+    this.shader = shader;
+    this.orthoScene = new THREE.Scene();
+    var fbo = createFBO(width, height);
+    this.fbos = [fbo, fbo.clone()];
+    this.current = 0;
+    this.output = this.fbos[0];
+    this.orthoCamera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, .00001, 1000);
+    this.orthoQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(width, height), this.shader);
+    this.orthoScene.add(this.orthoQuad);
+
+  }
+
+  GPUSim.prototype.render = function() {
+
+    this.shader.uniforms.inputTexture.value = this.fbos[this.current];
+    this.input = this.fbos[this.current];
+    this.current = 1 - this.current;
+    this.output = this.fbos[this.current];
+    this.renderer.render(this.orthoScene, this.orthoCamera, this.output);
+
+  }
+
+  var intersectionPlane;
+
+  var envMap;
+  var cubeCamera = new THREE.CubeCamera(.1, 1000, 512);
+  cubeCamera.position.y = 2;
+
+  var compositeFBO, glowFBO, blurredGlowFBO, fullBlurredGlowFBO, assembledFBO, tiltShiftFBO;
+  var infoData, infoTexture;
+
+  /*if (isMobile.any) {
+    loaderPanel.style.display = 'none';
+    document.getElementById('unsupported-warning').style.display = 'block';
+  } else {
+    window.addEventListener('load', init);
+  }*/
+  window.addEventListener('load', init);
+
+  var geometryTexture, pumpkinPositionsTexture;
+  var positionSim;
+  var pumpkinsMaterial;
+  var pumpkinsMesh;
+
+  var orthoQuad, orthoCamera, orthoScene;
+
+  function memcpy(src, srcOffset, dst, dstOffset, length) {
+    var i
+
+    src = src.subarray || src.slice ? src : src.buffer
+    dst = dst.subarray || dst.slice ? dst : dst.buffer
+
+    src = srcOffset ? src.subarray ?
+      src.subarray(srcOffset, length && srcOffset + length) :
+      src.slice(srcOffset, length && srcOffset + length) : src
+
+    if (dst.set) {
+      dst.set(src, dstOffset)
+    } else {
+      for (i = 0; i < src.length; i++) {
+        dst[i + dstOffset] = src[i]
+      }
+    }
+
+    return dst
+  }
+
+  function createRenderTarget() {
+
+    return new THREE.WebGLRenderTarget(1, 1, {
+      wrapS: THREE.ClampToEdgeWrapping,
+      wrapT: THREE.ClampToEdgeWrapping,
+      format: THREE.RGBAFormat,
+      stencilBuffer: false,
+      depthBuffer: true
+    });
+
+  }
+
+  var compositeShader, scaleGlowShader, blurShader, finalShader, tiltShiftShader;
+  var glowTexture, diffuseTexture, pumpkinObj;
+
+  function initScene() {
+
+    // 0 - 11, tops
+    // 12 - 23 bodies
+    var max = 0;
+
+    pumpkinObj.children.forEach(function(m) {
+      max = Math.max(max, m.geometry.attributes.position.count);
+      max = Math.max(max, m.geometry.attributes.normal.count);
+      max = Math.max(max, m.geometry.attributes.uv.count);
+    });
+
+    var width = Maf.nextPowerOfTwo(max);
+    var height = Maf.nextPowerOfTwo(pumpkinObj.children.length * 3);
+    console.log(width, height);
+
+    var data = new Float32Array(width * 4 * height);
+    var ptr = 0;
+    var topOffsets = [
+      new THREE.Vector3(4, 48, 2),
+      new THREE.Vector3(-4, 38, -2),
+      new THREE.Vector3(5, 37, -3),
+      new THREE.Vector3(5, 33, 0),
+      new THREE.Vector3(0, 31, -10),
+      new THREE.Vector3(-6, 21, -1),
+      new THREE.Vector3(.5, 22, -1.5),
+      new THREE.Vector3(4.5, 20.5, -1),
+      new THREE.Vector3(3.5, 14, -5),
+      new THREE.Vector3(0, 18, -1),
+      new THREE.Vector3(1, 16, 0),
+      new THREE.Vector3(2.5, 12, -1.5)
+    ];
+    pumpkinObj.children.forEach(function(m, i) {
+
+      var geo = m.geometry;
+      geo.center();
+      if (i < 12) {
+        var translateMatrix = new THREE.Matrix4();
+        translateMatrix.makeTranslation(topOffsets[i].x, topOffsets[i].y, topOffsets[i].z);
+        geo.applyMatrix(translateMatrix);
+      }
+
+      for (var j = 0, j1 = 0; j < geo.attributes.position.count * 4; j += 3, j1 += 4) {
+        data[ptr + j1] = geo.attributes.position.array[j];
+        data[ptr + j1 + 1] = geo.attributes.position.array[j + 1];
+        data[ptr + j1 + 2] = geo.attributes.position.array[j + 2];
+      }
+      ptr += width * 4;
+
+      for (var j = 0, j1 = 0; j < geo.attributes.normal.count * 4; j += 3, j1 += 4) {
+        data[ptr + j1] = geo.attributes.normal.array[j];
+        data[ptr + j1 + 1] = geo.attributes.normal.array[j + 1];
+        data[ptr + j1 + 2] = geo.attributes.normal.array[j + 2];
+      }
+      ptr += width * 4;
+
+      for (var j = 0, j1 = 0; j < geo.attributes.uv.count * 4; j += 2, j1 += 4) {
+        data[ptr + j1] = geo.attributes.uv.array[j];
+        data[ptr + j1 + 1] = geo.attributes.uv.array[j + 1];
+      }
+      ptr += width * 4;
+
+    });
+
+    geometryTexture = new THREE.DataTexture(
+      data,
+      width,
+      height,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+      null,
+      THREE.ClampToEdgeWrapping,
+      THREE.ClampToEdgeWrapping,
+      THREE.NearestFilter,
+      THREE.NearestFilter
+    );
+    geometryTexture.needsUpdate = true;
+
+    helper.attach(geometryTexture, 'Geometry');
+
+    var pw = Maf.nextPowerOfTwo(Math.sqrt(PUMPKINS));
+    var ph = pw;
+
+    console.log(pw, ph);
+
+    var positionData = new Float32Array(pw * 4 * ph);
+    for (var j = 0; j < positionData.length; j += 4) {
+      positionData[j] = Maf.randomInRange(-100, 100);
+      positionData[j + 1] = Maf.randomInRange(-100, 100);
+      positionData[j + 2] = Maf.randomInRange(-100, 100);
+      positionData[j + 3] = Maf.randomInRange(.5, 1);
+    }
+
+    pumpkinPositionsTexture = new THREE.DataTexture(
+      positionData,
+      pw,
+      ph,
+      THREE.RGBAFormat,
+      THREE.FloatType,
+      null,
+      THREE.ClampToEdgeWrapping,
+      THREE.ClampToEdgeWrapping,
+      THREE.NearestFilter,
+      THREE.NearestFilter
+    );
+    pumpkinPositionsTexture.needsUpdate = true;
+
+    var positionShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        time: { type: 'f', value: 0 },
+        inputTexture: { type: 't', value: null },
+        origin: { type: 't', value: pumpkinPositionsTexture },
+        offset: { type: 'v3', value: new THREE.Vector3(0, 0, 0) },
+        inverseModelViewMatrix: { type: 'm4', value: new THREE.Matrix4() },
+        FFTMap: { type: 't', value: spectrumTexture },
+        infoMap: { type: 't', value: null }
+      },
+      vertexShader: document.getElementById('position-vs').textContent,
+      fragmentShader: document.getElementById('position-fs').textContent,
+      depthTest: false,
+      depthWrite: false
+    });
+
+    positionSim = new GPUSim(renderer, pw, ph, positionShader);
+
+    helper.attach(positionSim.fbos[0], 'Position FBO#0');
+    helper.attach(positionSim.fbos[1], 'Position FBO#1');
+
+    helper.attach(pumpkinPositionsTexture, 'Positions');
+
+    var l = (426 + 768);
+    var positions = new Float32Array(l * pw * ph * 2);
+    var id = -1;
+    var p = 0;
+    var p2 = 0;
+    infoData = new Float32Array(pw * ph * 3);
+
+    for (var j = 0; j < positions.length; j += 2) {
+      if (j % (l * 2) === 0) {
+        id++;
+        infoData[p2] = ~~(Math.random() * 12); // modelId
+        infoData[p2 + 1] = .25 * Math.random(); // FFT frequency
+        infoData[p2 + 2] = ~~(Math.random() * 4); // Texture
+        p2 += 3;
+      }
+      positions[j] = p % (426 + 768); // vertexId
+      positions[j + 1] = id; // instanceId
+
+      p++;
+    }
+
+    infoTexture = new THREE.DataTexture(infoData, pw, ph, THREE.RGBFormat, THREE.FloatType);
+    infoTexture.minFilter = THREE.NearestFilter;
+    infoTexture.magFilter = THREE.NearestFilter;
+    infoTexture.needsUpdate = true;
+
+    helper.attach(infoTexture, 'Info');
+
+    var geometry = new THREE.BufferGeometry();
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 2));
+
+    pumpkinsMaterial = new THREE.RawShaderMaterial({
+      uniforms: {
+        positions: { type: 't', value: pumpkinPositionsTexture },
+        prevPositions: { type: 't', value: pumpkinPositionsTexture },
+        geometry: { type: 't', value: geometryTexture },
+        posDimensions: { type: 'v2', value: new THREE.Vector2(pw, ph) },
+        origin: { type: 't', value: pumpkinPositionsTexture },
+        map: { type: 't', value: diffuseTexture },
+        glowMap: { type: 't', value: glowTexture },
+        FFTMap: { type: 't', value: spectrumTexture },
+        infoMap: { type: 't', value: infoTexture },
+        time: { type: 'f', value: 0 },
+        lighting: { type: 'f', value: 0 }
+      },
+      vertexShader: document.getElementById('pumpkin-vs').textContent,
+      fragmentShader: document.getElementById('pumpkin-fs').textContent,
+      side: THREE.BackSide,
+      transparent: true
+    });
+    pumpkinsMesh = new THREE.Mesh(geometry, pumpkinsMaterial);
+    scene.add(pumpkinsMesh);
+    pumpkinsMesh.frustumCulled = false
+
+    positionShader.uniforms.infoMap.value = infoTexture;
+
+    renderer.render(scene, camera);
+
+    container.style.display = 'block';
+    onWindowResized();
+    animate();
+
+    if (userSong) {
+      document.getElementById('play').style.display = 'block';
+      closeInfo();
+      resetSound();
+      getSong(userSong);
+    } else {
+      infoPanel.classList.remove('hidden');
+    }
+
+  }
+
+  function init() {
+
+    container = document.getElementById('container');
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, .1, 10000);
+    camera.target = new THREE.Vector3(0, 0, 0);
+    camera.position.z = 400;
+    camera.position.y = 400;
+    scene.add(camera);
+
+    renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(0x202020, 1);
+    container.appendChild(renderer.domElement);
+
+    intersectionPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(10000, 10000),
+      new THREE.MeshNormalMaterial({ side: THREE.DoubleSide, visible: true })
+    );
+    intersectionPlane.material.visible = false;
+    scene.add(intersectionPlane);
+
+    helper = new FBOHelper(renderer);
+    //  document.getElementById( 'fboh-fbos-list' ).style.display = 'none';
+
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+    var manager = new THREE.LoadingManager(function() {
+      loader.style.display = 'none';
+      requestAnimationFrame(initScene);
+
+    });
+    manager.onProgress = function(item, loaded, total) {
+
+      loader.innerHTML = 'Loading ... ' + (loaded * 100 / total).toFixed(0) + '%';
+
+    };
+
+    var texLoader = new THREE.TextureLoader(manager);
+    glowTexture = texLoader.load('assets/pumpkins_glow.jpg');
+    diffuseTexture = texLoader.load('assets/all-low.jpg');
+    var objLoader = new THREE.OBJLoader(manager);
+    objLoader.load('assets/all.obj', function(res) { pumpkinObj = res; });
+
+    compositeFBO = createRenderTarget();
+    glowFBO = createRenderTarget();
+    blurredGlowFBO = createRenderTarget();
+    fullBlurredGlowFBO = createRenderTarget();
+    assembledFBO = createRenderTarget();
+    tiltShiftFBO = createRenderTarget();
+
+    compositeFBO.flipY = true;
+    glowFBO.flipY = true;
+    blurredGlowFBO.flipY = true;
+    fullBlurredGlowFBO.flipY = true;
+    assembledFBO.flipY = true;
+    tiltShiftFBO.flipY = true;
+
+    helper.attach(compositeFBO, 'Composite');
+    helper.attach(glowFBO, 'Glow');
+    helper.attach(blurredGlowFBO, 'Blur H');
+    helper.attach(fullBlurredGlowFBO, 'Blur V');
+    helper.attach(assembledFBO, 'Assembled');
+    helper.attach(tiltShiftFBO, 'Tilt-Shift');
+
+    window.addEventListener('mousemove', function(e) {
+
+      mouse.x = (e.clientX / renderer.domElement.clientWidth) * 2 - 1;
+      mouse.y = -(e.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+    });
+
+    renderer.domElement.addEventListener('touchmove', function(e) {
+
+      mouse.x = (e.touches[0].clientX / renderer.domElement.clientWidth) * 2 - 1;
+      mouse.y = -(e.touches[0].clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+    });
+
+    compositeShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        inputTexture: { type: 't', value: compositeFBO },
+        glowTexture: { type: 't', value: fullBlurredGlowFBO }
+      },
+      vertexShader: document.getElementById('ortho-vs').textContent,
+      fragmentShader: document.getElementById('composite-fs').textContent,
+    });
+
+    scaleGlowShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        inputTexture: { type: 't', value: compositeFBO }
+      },
+      vertexShader: document.getElementById('ortho-vs').textContent,
+      fragmentShader: document.getElementById('scale-glow-fs').textContent,
+    });
+
+    blurShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        inputTexture: { type: 't', value: glowFBO },
+        delta: { type: 'v2', value: new THREE.Vector2() },
+        resolution: { type: 'v2', value: new THREE.Vector2() }
+      },
+      vertexShader: document.getElementById('ortho-vs').textContent,
+      fragmentShader: document.getElementById('blur-fs').textContent,
+    });
+
+    finalShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        inputTexture: { type: 't', value: tiltShiftFBO },
+        resolution: { type: 'v2', value: new THREE.Vector2() },
+        boost: { type: 'f', value: 1.1 },
+        reduction: { type: 'f', value: .5 },
+        amount: { type: 'f', value: .1 },
+        time: { type: 'f', value: 0 }
+      },
+      vertexShader: document.getElementById('ortho-vs').textContent,
+      fragmentShader: document.getElementById('final-fs').textContent,
+    });
+
+    tiltShiftShader = new THREE.RawShaderMaterial({
+      uniforms: {
+        inputTexture: { type: 't', value: assembledFBO },
+        resolution: { type: 'v2', value: new THREE.Vector2() }
+      },
+      vertexShader: document.getElementById('ortho-vs').textContent,
+      fragmentShader: document.getElementById('tilt-shift-fs').textContent,
+    });
+
+    orthoScene = new THREE.Scene();
+    orthoCamera = new THREE.OrthographicCamera(1 / -2, 1 / 2, 1 / 2, 1 / -2, .00001, 1000);
+    orthoQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), compositeShader);
+    orthoScene.add(orthoQuad);
+
+    helper.attach(spectrumTexture, 'FFT');
+
+    window.addEventListener('resize', onWindowResized);
+
+  }
+
+  function onWindowResized(event) {
+
+    var w = container.clientWidth;
+    var h = container.clientHeight;
+
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    helper.setSize(w, h);
+
+    orthoQuad.scale.set(w, h, 1);
+
+    orthoCamera.left = -w / 2;
+    orthoCamera.right = w / 2;
+    orthoCamera.top = h / 2;
+    orthoCamera.bottom = -h / 2;
+    orthoCamera.updateProjectionMatrix();
+
+    var s = .5;
+    compositeFBO.setSize(w, h);
+    glowFBO.setSize(s * w, s * h);
+    blurredGlowFBO.setSize(s * w, s * h);
+    fullBlurredGlowFBO.setSize(s * w, s * h);
+    assembledFBO.setSize(w, h);
+    tiltShiftFBO.setSize(w, h);
+
+    helper.refreshFBO(compositeFBO);
+    helper.refreshFBO(glowFBO);
+    helper.refreshFBO(blurredGlowFBO);
+    helper.refreshFBO(fullBlurredGlowFBO);
+    helper.refreshFBO(assembledFBO);
+    helper.refreshFBO(tiltShiftFBO);
+
+    w *= renderer.getPixelRatio();
+    h *= renderer.getPixelRatio();
+    blurShader.uniforms.resolution.value.set(w, h);
+    finalShader.uniforms.resolution.value.set(w, h);
+
+  }
+
+  var lastTime = 0;
+
+  var run = true;
+  var m = new THREE.Matrix4();
+
+  window.addEventListener('keydown', e => {
+    if (e.keyCode === 32) run = !run;
+  });
+
+  /*
+    WEBGL_draw_buffers is available on 50% of hardware :/
+  */
+
+  var blur = 4;
+  var clearColor = new THREE.Color();
+
+  function animate() {
+
+    process();
+    controls.update();
+
+    if (demo) {
+      camera.position.set(-415.5524380445112, -41.77221542187185, 131.023180431145);
+      camera.lookAt(scene.position);
+      mouse.set(-.05, 0);
+    }
+
+    intersectionPlane.lookAt(camera.position);
+
+    raycaster.setFromCamera(mouse, camera);
+
+    var intersects = raycaster.intersectObject(intersectionPlane);
+
+    m.copy(pumpkinsMesh.matrixWorld);
+    positionSim.shader.uniforms.inverseModelViewMatrix.value.getInverse(m);
+
+    if (intersects.length) {
+      positionSim.shader.uniforms.offset.value.copy(intersects[0].point);
+    }
+
+    var t = performance.now();
+    var dt = (t - lastTime) / 1000;
+    lastTime = t;
+
+    var c = Maf.mix(0x20, 0xff, lighting) / 255.;
+    clearColor.setRGB(c, c, c);
+    renderer.setClearColor(clearColor);
+    pumpkinsMaterial.uniforms.lighting.value = lighting;
+
+    if (run) {
+
+      pumpkinsMesh.rotation.y = .0001 * t;
+
+      positionSim.shader.uniforms.time.value = .00001 * t;
+      positionSim.render();
+      pumpkinsMaterial.uniforms.positions.value = positionSim.output;
+      pumpkinsMaterial.uniforms.prevPositions.value = positionSim.input;
+      pumpkinsMaterial.uniforms.time.value = .0001 * t;
+
+    }
+
+    requestAnimationFrame(animate);
+
+    renderer.render(scene, camera, compositeFBO);
+
+    orthoQuad.material = scaleGlowShader;
+    renderer.render(orthoScene, orthoCamera, glowFBO);
+    orthoQuad.material = blurShader;
+    orthoQuad.material.uniforms.inputTexture.value = glowFBO;
+    orthoQuad.material.uniforms.delta.value.set(blur, 0);
+    renderer.render(orthoScene, orthoCamera, blurredGlowFBO);
+    orthoQuad.material = blurShader;
+    orthoQuad.material.uniforms.inputTexture.value = blurredGlowFBO;
+    orthoQuad.material.uniforms.delta.value.set(0, blur);
+    renderer.render(orthoScene, orthoCamera, fullBlurredGlowFBO);
+    orthoQuad.material = compositeShader;
+    renderer.render(orthoScene, orthoCamera, assembledFBO);
+    orthoQuad.material = tiltShiftShader;
+    renderer.render(orthoScene, orthoCamera, tiltShiftFBO);
+    orthoQuad.material = finalShader;
+    finalShader.uniforms.time.value = .000001 * t;
+    renderer.render(orthoScene, orthoCamera);
+
+
+    helper.update();
+
+  }
+  </script>
+
+</body>
 
-<script>
-
-'use strict';
-
-var tabMenu = document.getElementById( 'tabs' );
-var tabs = {};
-for( var j = 0; j < tabMenu.children.length; j++ ) {
-	var link = tabMenu.children[ j ];
-	var tabId = link.getAttribute( 'data-tab' );
-	tabs[ tabId ] = document.getElementById( tabId );
-	link.addEventListener( 'click', function( e ) {
-		var c = 0;
-		for( var j in tabs ) {
-			tabs[ j ].style.display = 'none';
-			tabMenu.children[ c ].classList.remove( 'active' );
-			c++;
-		}
-		tabs[ this.getAttribute( 'data-tab' ) ].style.display = 'block';
-		this.classList.add( 'active' );
-		e.preventDefault();
-	}.bind( link ) );
-}
-
-var PUMPKINS;
-var userSong;
-// hash: { p: num, u: url }
-function parseHash() {
-
-	var hash = window.location.hash.substr( 1 );
-
-	const regex = /(\S)=([^&]*)/g;
-	const str = hash;
-	let m;
-
-	var reload = false;
-
-	while ((m = regex.exec(str)) !== null) {
-		if (m.index === regex.lastIndex) {
-			regex.lastIndex++;
-		}
-
-		var varName = m[ 1 ];
-		var varValue = m[ 2 ];
-
-		if( varName === 'p' ) {
-			varValue = parseInt( varValue, 10 );
-			if( PUMPKINS !== undefined && varValue !== PUMPKINS ) {
-				reload = true;
-			}
-			PUMPKINS = varValue;
-		}
-		if( varName === 'u' ) userSong = decodeURIComponent( varValue );
-
-	}
-
-	if( reload ) {
-		window.location.reload();
-	}
-
-}
-
-parseHash();
-
-PUMPKINS = PUMPKINS || 1000;
-
-window.addEventListener( 'hashchange', function( e ) {
-	userSong = null;
-	parseHash();
-	if( userSong ) getSong( userSong );
-} );
-
-var helper;
-
-var demo = true;
-
-var container, renderer, camera, controls, scene,
-	mesh, geometry, material;
-
-var container = document.getElementById( 'container' );
-
-var id = 'b1275b704badf79d972d51aa4b92ea15';
-
-SC.initialize({
-	client_id: id
-});
-
-if( 'webkitAudioContext' in window ) {
-	var AudioContext = webkitAudioContext;
-}
-
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-
-var audio = document.createElement( 'audio' );
-audio.loop = true;
-audio.autoplay = true;
-audio.crossOrigin = '';
-var context = new AudioContext();
-var analyser = context.createAnalyser();
-analyser.fftSize = 256;
-var frequencyData = new Uint8Array( analyser.frequencyBinCount );
-
-var songSource = context.createMediaElementSource( audio );
-songSource.connect( analyser );
-songSource.connect( context.destination );
-
-var kick = new Kick({
-	frequency: [ 5, 20 ],
-	decay: 0.04,
-	onKick: function() {
-		lighting = 1;
-	},
-	offKick: function() {
-		lighting *= .95;
-	}
-});
-kick.on();
-
-var spectrumTexture = new THREE.DataTexture( frequencyData, .5 * frequencyData.length, 1, THREE.LuminanceFormat );
-spectrumTexture.minFilter = THREE.NearestFilter;
-spectrumTexture.magFilter = THREE.NearestFilter;
-spectrumTexture.needsUpdate = true;
-
-var microphone;
-
-function resetSound() {
-	if( microphone ) {
-		microphone.disconnect();
-	}
-	if( songSource ) {
-		songSource.disconnect();
-	}
-}
-
-var songPanel = document.getElementById( 'songPanel' );
-var songInfo = document.getElementById( 'songInfo' );
-var sharePanel = document.getElementById( 'sharePanel' );
-
-function getSong( songURL ) {
-	SC.resolve( songURL ).then( function(song){
-		songInfo.innerHTML = '<p><b><a href="' + song.permalink_url + '" >' + song.title + '</a> <a href="#" id="pauseBtn" >PAUSE</a></b><br/><a href="' + song.user.permalink_url + '">' + song.user.username + '</a></p>'
-		audio.src = song.stream_url + "?client_id=" + id;
-		songSource.connect( analyser );
-		songSource.connect( context.destination );
-		songPanel.classList.remove( 'hidden' );
-
-		document.getElementById( 'pauseBtn' ).addEventListener( 'click', function( e ) {
-			if( audio.paused ) {
-				this.textContent = 'PAUSE';
-				audio.play();
-			} else {
-				this.textContent = 'PLAY';
-				audio.pause();
-			}
-			e.preventDefault();
-		});
-
-		var baseUrl = 'https://www.clicktorelease.com/code/pumpkin-jam'
-		var url = baseUrl + '#p=' + PUMPKINS + '&u=' + encodeURIComponent( songURL );
-		shareFacebookBtn.onclick = function( e ) {
-
-			window.open( 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent( url ), 'facebook-share-dialog', 'width=626,height=436');
-			return false;
-		}
-
-		shareTwitterBtn.onclick = function( e ) {
-
-			var msg = 'This is my pumpkin jam! ' + url;
-			window.open( 'https://twitter.com/intent/tweet?original_referer=' + encodeURIComponent( url ) + '&text=' + encodeURIComponent( msg ), 'twitter-share-dialog', 'width=626,height=436');
-			return false;
-		}
-
-		requestAnimationFrame( start );
-	});
-}
-
-function getMicrophone() {
-
-	if( microphone ) {
-		microphone.connect( analyser );
-		return;
-	}
-
-	navigator.getUserMedia( { audio: true }, function(stream) {
-
-		microphone = context.createMediaStreamSource(stream);
-		microphone.connect( analyser );
-		start();
-
-	},
-	function(err) {
-	} );
-
-}
-
-var content = document.getElementById( 'content' );
-var infoPanel = document.getElementById( 'info' );
-var loaderPanel = document.getElementById( 'loader' );
-var infoButton = document.getElementById( 'button' );
-document.getElementById( 'button' ).addEventListener( 'click', function( e ) {
-	content.classList.remove( 'hidden' );
-	infoButton.classList.add( 'hidden' );
-	infoPanel.classList.remove( 'hidden' );
-});
-function closeInfo() {
-	content.classList.add( 'hidden' );
-	infoButton.classList.remove( 'hidden' );
-}
-document.getElementById( 'closeInfo' ).addEventListener( 'click', function( e ) {
-	closeInfo();
-});
-
-var playing = false;
-
-function start() {
-
-	if( playing ) return;
-	playing = true;
-
-}
-
-function setSong( url ) {
-	closeInfo();
-	resetSound();
-	var hash = '#p=' + PUMPKINS + '&u=' + encodeURIComponent( url );
-	window.location.hash = hash;
-}
-
-document.getElementById( 'startMusic1' ).addEventListener( 'click', function( e ) {
-	setSong( 'https://soundcloud.com/djtruestory/electro-swing' );
-	e.preventDefault();
-})
-
-document.getElementById( 'startMusic2' ).addEventListener( 'click', function( e ) {
-	setSong( 'https://soundcloud.com/megadrivemusic/i-am-the-program' );
-	e.preventDefault();
-})
-
-document.getElementById( 'startMic' ).addEventListener( 'click', function( e ) {
-	getMicrophone();
-	e.preventDefault();
-})
-
-document.getElementById( 'playMusic' ).addEventListener( 'click', function( e ) {
-	var url = document.getElementById( 'songURL' ).value;
-	setSong( url );
-	e.preventDefault();
-})
-
-document.getElementById( 'demoMode' ).addEventListener( 'click', function( e ) {
-	demo = this.checked;
-})
-
-/*document.getElementById( 'startButton' ).addEventListener( 'click', function( e ) {
-	audio.play();
-})*/
-
-var lighting = 0;
-
-function process(){
-
-	analyser.getByteFrequencyData( frequencyData );
-	spectrumTexture.needsUpdate = true;
-	kick.onUpdate();
-
-}
-
-function createFBO( width, height ) {
-
-	var fbo = new THREE.WebGLRenderTarget( width, height, {
-		wrapS: THREE.ClampToEdgeWrapping,
-		wrapT: THREE.ClampToEdgeWrapping,
-		minFilter: THREE.NearestFilter,
-		magFilter: THREE.NearestFilter,
-		format: THREE.RGBAFormat,
-		type: THREE.FloatType,
-		stencilBuffer: false,
-		depthBuffer: false
-	});
-
-	fbo.texture.generateMipmaps = false;
-
-	return fbo;
-
-}
-
-function GPUSim( renderer, width, height, shader ) {
-
-	this.renderer = renderer;
-	this.shader = shader;
-	this.orthoScene = new THREE.Scene();
-	var fbo = createFBO( width, height );
-	this.fbos = [ fbo, fbo.clone() ];
-	this.current = 0;
-	this.output = this.fbos[ 0 ];
-	this.orthoCamera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, .00001, 1000 );
-	this.orthoQuad = new THREE.Mesh( new THREE.PlaneBufferGeometry( width, height ), this.shader );
-	this.orthoScene.add( this.orthoQuad );
-
-}
-
-GPUSim.prototype.render = function() {
-
-	this.shader.uniforms.inputTexture.value = this.fbos[ this.current ];
-	this.input = this.fbos[ this.current ];
-	this.current = 1 - this.current;
-	this.output = this.fbos[ this.current ];
-	this.renderer.render( this.orthoScene, this.orthoCamera, this.output );
-
-}
-
-var intersectionPlane;
-
-var envMap;
-var cubeCamera = new THREE.CubeCamera( .1, 1000, 512 );
-cubeCamera.position.y = 2;
-
-var compositeFBO, glowFBO, blurredGlowFBO, fullBlurredGlowFBO, assembledFBO, tiltShiftFBO;
-var infoData, infoTexture;
-
-if( isMobile.any ) {
-	loaderPanel.style.display = 'none';
-	document.getElementById( 'unsupported-warning' ).style.display = 'block';
-} else {
-	window.addEventListener( 'load', init );
-}
-
-var geometryTexture, pumpkinPositionsTexture;
-var positionSim;
-var pumpkinsMaterial;
-var pumpkinsMesh;
-
-var orthoQuad, orthoCamera, orthoScene;
-
-function memcpy (src, srcOffset, dst, dstOffset, length) {
-	var i
-
-	src = src.subarray || src.slice ? src : src.buffer
-	dst = dst.subarray || dst.slice ? dst : dst.buffer
-
-	src = srcOffset ? src.subarray ?
-		src.subarray(srcOffset, length && srcOffset + length) :
-		src.slice(srcOffset, length && srcOffset + length) : src
-
-	if (dst.set) {
-		dst.set(src, dstOffset)
-	} else {
-		for (i=0; i<src.length; i++) {
-			dst[i + dstOffset] = src[i]
-		}
-	}
-
-	return dst
-}
-
-function createRenderTarget() {
-
-	return new THREE.WebGLRenderTarget( 1, 1, {
-		wrapS: THREE.ClampToEdgeWrapping,
-		wrapT: THREE.ClampToEdgeWrapping,
-		format: THREE.RGBAFormat,
-		stencilBuffer: false,
-		depthBuffer: true
-	});
-
-}
-
-var compositeShader, scaleGlowShader, blurShader, finalShader, tiltShiftShader;
-var glowTexture, diffuseTexture, pumpkinObj;
-
-function initScene() {
-
-	// 0 - 11, tops
-	// 12 - 23 bodies
-	var max = 0;
-
-	pumpkinObj.children.forEach( function( m ) {
-		max = Math.max( max, m.geometry.attributes.position.count );
-		max = Math.max( max, m.geometry.attributes.normal.count );
-		max = Math.max( max, m.geometry.attributes.uv.count );
-	});
-
-	var width = Maf.nextPowerOfTwo( max );
-	var height = Maf.nextPowerOfTwo( pumpkinObj.children.length * 3 );
-	console.log( width, height );
-
-	var data = new Float32Array( width * 4 * height );
-	var ptr = 0;
-	var topOffsets = [
-		new THREE.Vector3( 4, 48, 2 ),
-		new THREE.Vector3( -4, 38, -2 ),
-		new THREE.Vector3( 5, 37, -3 ),
-		new THREE.Vector3( 5, 33, 0 ),
-		new THREE.Vector3( 0, 31, -10 ),
-		new THREE.Vector3( -6, 21, -1 ),
-		new THREE.Vector3( .5, 22, -1.5 ),
-		new THREE.Vector3( 4.5, 20.5, -1 ),
-		new THREE.Vector3( 3.5, 14, -5 ),
-		new THREE.Vector3( 0, 18, -1 ),
-		new THREE.Vector3( 1, 16, 0 ),
-		new THREE.Vector3( 2.5, 12, -1.5 )
-	];
-	pumpkinObj.children.forEach( function( m, i ) {
-
-		var geo = m.geometry;
-		geo.center();
-		if( i < 12 ) {
-			var translateMatrix = new THREE.Matrix4();
-			translateMatrix.makeTranslation( topOffsets[ i ].x, topOffsets[ i ].y, topOffsets[ i ].z );
-			geo.applyMatrix( translateMatrix );
-		}
-
-		for( var j = 0, j1 = 0; j < geo.attributes.position.count * 4; j += 3, j1 += 4 ){
-			data[ ptr + j1 ] = geo.attributes.position.array[ j ];
-			data[ ptr + j1 + 1 ] = geo.attributes.position.array[ j + 1 ];
-			data[ ptr + j1 + 2 ] = geo.attributes.position.array[ j + 2 ];
-		}
-		ptr += width * 4;
-
-		for( var j = 0, j1 = 0; j < geo.attributes.normal.count * 4; j += 3, j1 += 4 ){
-			data[ ptr + j1 ] = geo.attributes.normal.array[ j ];
-			data[ ptr + j1 + 1 ] = geo.attributes.normal.array[ j + 1 ];
-			data[ ptr + j1 + 2 ] = geo.attributes.normal.array[ j + 2 ];
-		}
-		ptr += width * 4;
-
-		for( var j = 0, j1 = 0; j < geo.attributes.uv.count * 4; j += 2, j1 += 4 ){
-			data[ ptr + j1 ] = geo.attributes.uv.array[ j ];
-			data[ ptr + j1 + 1 ] = geo.attributes.uv.array[ j + 1 ];
-		}
-		ptr += width * 4;
-
-	});
-
-	geometryTexture = new THREE.DataTexture(
-		data,
-		width,
-		height,
-		THREE.RGBAFormat,
-		THREE.FloatType,
-		null,
-		THREE.ClampToEdgeWrapping,
-		THREE.ClampToEdgeWrapping,
-		THREE.NearestFilter,
-		THREE.NearestFilter
-	);
-	geometryTexture.needsUpdate = true;
-
-	helper.attach( geometryTexture, 'Geometry' );
-
-	var pw = Maf.nextPowerOfTwo( Math.sqrt( PUMPKINS ) );
-	var ph = pw;
-
-	console.log( pw, ph );
-
-	var positionData = new Float32Array( pw * 4 * ph );
-	for( var j = 0; j < positionData.length; j += 4 ) {
-		positionData[ j ] = Maf.randomInRange( -100, 100 );
-		positionData[ j + 1 ] = Maf.randomInRange( -100, 100 );
-		positionData[ j + 2 ] = Maf.randomInRange( -100, 100 );
-		positionData[ j + 3 ] = Maf.randomInRange( .5, 1 );
-	}
-
-	pumpkinPositionsTexture = new THREE.DataTexture(
-		positionData,
-		pw,
-		ph,
-		THREE.RGBAFormat,
-		THREE.FloatType,
-		null,
-		THREE.ClampToEdgeWrapping,
-		THREE.ClampToEdgeWrapping,
-		THREE.NearestFilter,
-		THREE.NearestFilter
-	);
-	pumpkinPositionsTexture.needsUpdate = true;
-
-	var positionShader = new THREE.RawShaderMaterial( {
-		uniforms:{
-			time: { type: 'f', value: 0 },
-			inputTexture: { type: 't', value: null },
-			origin: { type: 't', value: pumpkinPositionsTexture },
-			offset: { type: 'v3', value: new THREE.Vector3( 0, 0, 0 ) },
-			inverseModelViewMatrix: { type: 'm4', value: new THREE.Matrix4() },
-			FFTMap: { type: 't', value: spectrumTexture },
-			infoMap: { type: 't', value: null }
-		},
-		vertexShader: document.getElementById( 'position-vs' ).textContent,
-		fragmentShader: document.getElementById( 'position-fs' ).textContent,
-		depthTest: false,
-		depthWrite: false
-	} );
-
-	positionSim = new GPUSim( renderer, pw, ph, positionShader );
-
-	helper.attach( positionSim.fbos[ 0 ], 'Position FBO#0' );
-	helper.attach( positionSim.fbos[ 1 ], 'Position FBO#1' );
-
-	helper.attach( pumpkinPositionsTexture, 'Positions' );
-
-	var l = ( 426 + 768 );
-	var positions = new Float32Array( l * pw * ph * 2 );
-	var id = -1;
-	var p = 0;
-	var p2 = 0;
-	infoData = new Float32Array( pw * ph * 3 );
-
-	for( var j = 0; j < positions.length; j += 2 ) {
-		if( j % ( l * 2 ) === 0 ) {
-			id++;
-			infoData[ p2 ] = ~~(Math.random()*12); // modelId
-			infoData[ p2 + 1 ] = .25 * Math.random(); // FFT frequency
-			infoData[ p2 + 2 ] = ~~( Math.random() * 4 ); // Texture
-			p2 += 3;
-		}
-		positions[ j ] = p % ( 426 + 768 ); // vertexId
-		positions[ j + 1 ] = id; // instanceId
-
-		p++;
-	}
-
-	infoTexture = new THREE.DataTexture( infoData, pw, ph, THREE.RGBFormat, THREE.FloatType );
-	infoTexture.minFilter = THREE.NearestFilter;
-	infoTexture.magFilter = THREE.NearestFilter;
-	infoTexture.needsUpdate = true;
-
-	helper.attach( infoTexture, 'Info' );
-
-	var geometry = new THREE.BufferGeometry();
-	geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 2 ) );
-
-	pumpkinsMaterial = new THREE.RawShaderMaterial({
-		uniforms: {
-			positions: { type: 't', value: pumpkinPositionsTexture },
-			prevPositions: { type: 't', value: pumpkinPositionsTexture },
-			geometry: { type: 't', value: geometryTexture },
-			posDimensions: { type: 'v2', value: new THREE.Vector2( pw, ph ) },
-			origin: { type: 't', value: pumpkinPositionsTexture },
-			map: { type: 't', value: diffuseTexture },
-			glowMap: { type: 't', value: glowTexture },
-			FFTMap: { type: 't', value: spectrumTexture },
-			infoMap: { type: 't', value: infoTexture },
-			time: { type: 'f', value: 0 },
-			lighting: { type: 'f', value: 0 }
-		},
-		vertexShader: document.getElementById('pumpkin-vs').textContent,
-		fragmentShader: document.getElementById('pumpkin-fs').textContent,
-		side: THREE.BackSide,
-		transparent: true
-	});
-	pumpkinsMesh = new THREE.Mesh( geometry, pumpkinsMaterial );
-	scene.add( pumpkinsMesh );
-	pumpkinsMesh.frustumCulled = false
-
-	positionShader.uniforms.infoMap.value = infoTexture;
-
-	renderer.render( scene, camera );
-
-	container.style.display = 'block';
-	onWindowResized();
-	animate();
-
-	if( userSong ) {
-		closeInfo();
-		resetSound();
-		getSong( userSong );
-	} else {
-		infoPanel.classList.remove( 'hidden' );
-	}
-
-}
-
-function init() {
-
-	container = document.getElementById( 'container' );
-
-	scene = new THREE.Scene();
-
-	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 10000 );
-	camera.target = new THREE.Vector3( 0, 0, 0 );
-	camera.position.z = 400;
-	camera.position.y = 400;
-	scene.add( camera );
-
-	renderer = new THREE.WebGLRenderer( { antialias: false, preserveDrawingBuffer: true } );
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor( 0x202020, 1 );
-	container.appendChild( renderer.domElement );
-
-	intersectionPlane = new THREE.Mesh(
-		new THREE.PlaneGeometry( 10000, 10000 ),
-		new THREE.MeshNormalMaterial( { side: THREE.DoubleSide, visible: true } )
-	);
-	intersectionPlane.material.visible = false;
-	scene.add( intersectionPlane );
-
-	helper = new FBOHelper( renderer );
-//	document.getElementById( 'fboh-fbos-list' ).style.display = 'none';
-
-	controls = new THREE.OrbitControls( camera, renderer.domElement );
-
-	var manager = new THREE.LoadingManager( function() {
-		loader.style.display = 'none';
-		requestAnimationFrame( initScene );
-
-	});
-	manager.onProgress = function ( item, loaded, total ) {
-
-		loader.innerHTML = 'Loading ... ' + ( loaded * 100 / total ).toFixed( 0 ) + '%';
-
-	};
-
-	var texLoader = new THREE.TextureLoader( manager );
-	glowTexture = texLoader.load( 'assets/pumpkins_glow.jpg' );
-	diffuseTexture = texLoader.load( 'assets/all-low.jpg' );
-	var objLoader = new THREE.OBJLoader( manager );
-	objLoader.load( 'assets/all.obj', function( res ){ pumpkinObj = res; } );
-
-	compositeFBO = createRenderTarget();
-	glowFBO = createRenderTarget();
-	blurredGlowFBO = createRenderTarget();
-	fullBlurredGlowFBO = createRenderTarget();
-	assembledFBO = createRenderTarget();
-	tiltShiftFBO = createRenderTarget();
-
-	compositeFBO.flipY = true;
-	glowFBO.flipY = true;
-	blurredGlowFBO.flipY = true;
-	fullBlurredGlowFBO.flipY = true;
-	assembledFBO.flipY = true;
-	tiltShiftFBO.flipY = true;
-
-	helper.attach( compositeFBO, 'Composite' );
-	helper.attach( glowFBO, 'Glow' );
-	helper.attach( blurredGlowFBO, 'Blur H' );
-	helper.attach( fullBlurredGlowFBO, 'Blur V' );
-	helper.attach( assembledFBO, 'Assembled' );
-	helper.attach( tiltShiftFBO, 'Tilt-Shift' );
-
-	window.addEventListener( 'mousemove', function( e ) {
-
-		mouse.x = ( e.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-		mouse.y = - ( e.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-
-	});
-
-	renderer.domElement.addEventListener( 'touchmove', function( e ) {
-
-		mouse.x = ( e.touches[ 0 ].clientX / renderer.domElement.clientWidth ) * 2 - 1;
-		mouse.y = - ( e.touches[ 0 ].clientY / renderer.domElement.clientHeight ) * 2 + 1;
-
-	});
-
-	compositeShader = new THREE.RawShaderMaterial( {
-		uniforms: {
-			inputTexture: { type: 't', value: compositeFBO },
-			glowTexture: { type: 't', value: fullBlurredGlowFBO }
-		},
-		vertexShader: document.getElementById('ortho-vs').textContent,
-		fragmentShader: document.getElementById('composite-fs').textContent,
-	} );
-
-	scaleGlowShader = new THREE.RawShaderMaterial( {
-		uniforms: {
-			inputTexture: { type: 't', value: compositeFBO }
-		},
-		vertexShader: document.getElementById('ortho-vs').textContent,
-		fragmentShader: document.getElementById('scale-glow-fs').textContent,
-	} );
-
-	blurShader = new THREE.RawShaderMaterial( {
-		uniforms: {
-			inputTexture: { type: 't', value: glowFBO },
-			delta: { type: 'v2', value: new THREE.Vector2() },
-			resolution: { type: 'v2', value: new THREE.Vector2() }
-		},
-		vertexShader: document.getElementById('ortho-vs').textContent,
-		fragmentShader: document.getElementById('blur-fs').textContent,
-	} );
-
-	finalShader = new THREE.RawShaderMaterial( {
-		uniforms: {
-			inputTexture: { type: 't', value: tiltShiftFBO },
-			resolution: { type: 'v2', value: new THREE.Vector2() },
-			boost: { type: 'f', value: 1.1 },
-			reduction: { type: 'f', value: .5 },
-			amount: { type: 'f', value: .1 },
-			time: { type: 'f', value: 0 }
-		},
-		vertexShader: document.getElementById('ortho-vs').textContent,
-		fragmentShader: document.getElementById('final-fs').textContent,
-	} );
-
-	tiltShiftShader = new THREE.RawShaderMaterial( {
-		uniforms: {
-			inputTexture: { type: 't', value: assembledFBO },
-			resolution: { type: 'v2', value: new THREE.Vector2() }
-		},
-		vertexShader: document.getElementById('ortho-vs').textContent,
-		fragmentShader: document.getElementById('tilt-shift-fs').textContent,
-	} );
-
-	orthoScene = new THREE.Scene();
-	orthoCamera = new THREE.OrthographicCamera( 1 / - 2, 1 / 2, 1 / 2, 1 / - 2, .00001, 1000 );
-	orthoQuad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 1, 1 ), compositeShader );
-	orthoScene.add( orthoQuad );
-
-	helper.attach( spectrumTexture, 'FFT' );
-
-	window.addEventListener( 'resize', onWindowResized );
-
-}
-
-function onWindowResized( event ) {
-
-	var w = container.clientWidth;
-	var h = container.clientHeight;
-
-	renderer.setSize( w, h );
-	camera.aspect = w / h;
-	camera.updateProjectionMatrix();
-	helper.setSize( w, h );
-
-	orthoQuad.scale.set( w, h, 1 );
-
-	orthoCamera.left   = - w / 2;
-	orthoCamera.right  =   w / 2;
-	orthoCamera.top    =   h / 2;
-	orthoCamera.bottom = - h / 2;
-	orthoCamera.updateProjectionMatrix();
-
-	var s = .5;
-	compositeFBO.setSize( w, h );
-	glowFBO.setSize( s * w, s * h );
-	blurredGlowFBO.setSize( s * w, s * h );
-	fullBlurredGlowFBO.setSize( s * w, s * h );
-	assembledFBO.setSize( w, h );
-	tiltShiftFBO.setSize( w, h );
-
-	helper.refreshFBO( compositeFBO );
-	helper.refreshFBO( glowFBO );
-	helper.refreshFBO( blurredGlowFBO );
-	helper.refreshFBO( fullBlurredGlowFBO );
-	helper.refreshFBO( assembledFBO );
-	helper.refreshFBO( tiltShiftFBO );
-
-	w *= renderer.getPixelRatio();
-	h *= renderer.getPixelRatio();
-	blurShader.uniforms.resolution.value.set( w,h );
-	finalShader.uniforms.resolution.value.set( w,h );
-
-}
-
-var lastTime = 0;
-
-var run = true;
-var m = new THREE.Matrix4();
-
-window.addEventListener( 'keydown', e => {
-	if( e.keyCode === 32 ) run = !run;
-});
-
-/*
-	WEBGL_draw_buffers is available on 50% of hardware :/
-*/
-
-var blur = 4;
-var clearColor = new THREE.Color();
-
-function animate() {
-
-	process();
-	controls.update();
-
-	if( demo ) {
-		camera.position.set( -415.5524380445112, -41.77221542187185, 131.023180431145 );
-		camera.lookAt( scene.position );
-		mouse.set( -.05, 0 );
-	}
-
-	intersectionPlane.lookAt( camera.position );
-
-	raycaster.setFromCamera( mouse, camera );
-
-	var intersects = raycaster.intersectObject( intersectionPlane );
-
-	m.copy( pumpkinsMesh.matrixWorld );
-	positionSim.shader.uniforms.inverseModelViewMatrix.value.getInverse( m );
-
-	if( intersects.length ) {
-		positionSim.shader.uniforms.offset.value.copy( intersects[ 0 ].point );
-	}
-
-	var t = performance.now();
-	var dt = ( t - lastTime ) / 1000;
-	lastTime = t;
-
-	var c = Maf.mix( 0x20, 0xff, lighting ) / 255.;
-	clearColor.setRGB( c, c, c );
-	renderer.setClearColor( clearColor );
-	pumpkinsMaterial.uniforms.lighting.value = lighting;
-
-	if( run ) {
-
-		pumpkinsMesh.rotation.y = .0001 * t;
-
-		positionSim.shader.uniforms.time.value = .00001 * t;
-		positionSim.render();
-		pumpkinsMaterial.uniforms.positions.value = positionSim.output;
-		pumpkinsMaterial.uniforms.prevPositions.value = positionSim.input;
-		pumpkinsMaterial.uniforms.time.value = .0001 * t;
-
-	}
-
-	requestAnimationFrame( animate );
-
-	renderer.render( scene, camera, compositeFBO );
-
-	orthoQuad.material = scaleGlowShader;
-	renderer.render( orthoScene, orthoCamera, glowFBO );
-	orthoQuad.material = blurShader;
-	orthoQuad.material.uniforms.inputTexture.value = glowFBO;
-	orthoQuad.material.uniforms.delta.value.set( blur, 0 );
-	renderer.render( orthoScene, orthoCamera, blurredGlowFBO );
-	orthoQuad.material = blurShader;
-	orthoQuad.material.uniforms.inputTexture.value = blurredGlowFBO;
-	orthoQuad.material.uniforms.delta.value.set( 0, blur );
-	renderer.render( orthoScene, orthoCamera, fullBlurredGlowFBO );
-	orthoQuad.material = compositeShader;
-	renderer.render( orthoScene, orthoCamera, assembledFBO );
-	orthoQuad.material = tiltShiftShader;
-	renderer.render( orthoScene, orthoCamera, tiltShiftFBO );
-	orthoQuad.material = finalShader;
-	finalShader.uniforms.time.value = .000001 * t;
-	renderer.render( orthoScene, orthoCamera );
-
-
-	helper.update();
-
-}
-
-</script>
-
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.8&appId=404776652982935";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-
-	</body>
 </html>
