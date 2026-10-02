@@ -243,7 +243,7 @@
   <script src="js/THREE.FBOHelper.js"></script>
   <script src="js/Kick.js"></script>
   <script src="js/isMobile.min.js"></script>
-  <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.6.15/hls.min.js"></script>
   <script id="position-vs" type="x-shader/x-vertex">
     precision highp float;
 
@@ -892,11 +892,9 @@ void main() {
 
   var container = document.getElementById('container');
 
-  var id = 'b1275b704badf79d972d51aa4b92ea15';
-
-  SC.initialize({
-    client_id: id
-  });
+  // SoundCloud proxy (see proxy/); set the production URL after deploying the worker
+  var PROXY_URL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ?
+    'http://localhost:8787' : 'https://pumpkin-jam-proxy.REPLACE_ME.workers.dev';
 
   if ('webkitAudioContext' in window) {
     var AudioContext = webkitAudioContext;
@@ -950,12 +948,40 @@ void main() {
   var songInfo = document.getElementById('songInfo');
   var sharePanel = document.getElementById('sharePanel');
 
+  var hls;
+
+  function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function playStream(song) {
+    if (hls) {
+      hls.destroy();
+      hls = null;
+    }
+    // Chrome and Firefox can't play HLS natively; Safari can
+    if (song.hls && window.Hls && Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(song.stream);
+      hls.attachMedia(audio);
+    } else {
+      audio.src = song.stream;
+    }
+  }
+
   function getSong(songURL) {
-    SC.resolve(songURL).then(function(song) {
-      songInfo.innerHTML = '<p><b><a href="' + song.permalink_url + '" >' + song.title +
-        '</a> <a href="#" id="pauseBtn" >PAUSE</a></b><br/><a href="' + song.user.permalink_url + '">' + song.user.username +
-        '</a></p>'
-      audio.src = song.stream_url + "?client_id=" + id;
+    fetch(PROXY_URL + '/resolve?url=' + encodeURIComponent(songURL)).then(function(res) {
+      return res.json().then(function(song) {
+        if (!res.ok) throw new Error(song.error || res.statusText);
+        return song;
+      });
+    }).then(function(song) {
+      songInfo.innerHTML = '<p><b><a href="' + escapeHTML(song.permalink_url) + '" >' + escapeHTML(song.title) +
+        '</a> <a href="#" id="pauseBtn" >PAUSE</a></b><br/><a href="' + escapeHTML(song.user.permalink_url) + '">' +
+        escapeHTML(song.user.username) + '</a></p>'
+      playStream(song);
 
       songSource.connect(analyser);
       songSource.connect(context.destination);
@@ -990,6 +1016,9 @@ void main() {
       }
 
       requestAnimationFrame(start);
+    }).catch(function(err) {
+      songInfo.innerHTML = '<p><b>Couldn\'t play this song</b><br/>' + escapeHTML(err.message) + '</p>';
+      songPanel.classList.remove('hidden');
     });
   }
 

@@ -1,0 +1,45 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      # BitGem's licence forbids publishing the models in a public repo, so they live in a private one
+      - uses: actions/checkout@v7
+        with:
+          repository: spite/halloween-2016-assets
+          token: ${{ secrets.ASSETS_TOKEN }}
+          path: private-assets
+
+      - name: Assemble site
+        run: |
+          mkdir _site
+          cp index.html image.jpg _site/
+          cp -r js assets _site/
+          cp private-assets/all.obj private-assets/all-low.jpg private-assets/pumpkins_glow.jpg _site/assets/
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v5
